@@ -1,6 +1,7 @@
 # Ignore all dotfiles #
 #######################
 .*
+!/.devcontainer
 !/.gitignore
 !/.editorconfig
 !/.scrutinizer.yml
