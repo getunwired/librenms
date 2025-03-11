@@ -25,7 +25,7 @@ function rewrite_entity_descr($descr)
     $descr = preg_replace('/^voltages /', '', $descr);
     $descr = str_replace('PowerSupply', 'PSU ', $descr);
 
-    return $descr;
+    return trim($descr);
 }
 
 /**
@@ -41,9 +41,10 @@ function cleanPort($interface, $device = null)
     if (! $interface) {
         return $interface;
     }
-    $interface['ifAlias'] = htmlentities($interface['ifAlias']);
-    $interface['ifName'] = htmlentities($interface['ifName']);
-    $interface['ifDescr'] = htmlentities($interface['ifDescr']);
+
+    $interface['ifAlias'] = htmlentities($interface['ifAlias'] ?? '');
+    $interface['ifName'] = htmlentities($interface['ifName'] ?? '');
+    $interface['ifDescr'] = htmlentities($interface['ifDescr'] ?? '');
 
     if (! $device) {
         $device = device_by_id_cache($interface['device_id']);
@@ -89,44 +90,12 @@ function cleanPort($interface, $device = null)
     return $interface;
 }
 
-// Specific rewrite functions
-
-function makeshortif($if)
-{
-    $rewrite_shortif = [
-        'tengigabitethernet'  => 'Te',
-        'ten-gigabitethernet' => 'Te',
-        'tengige'             => 'Te',
-        'gigabitethernet'     => 'Gi',
-        'fastethernet'        => 'Fa',
-        'ethernet'            => 'Et',
-        'serial'              => 'Se',
-        'pos'                 => 'Pos',
-        'port-channel'        => 'Po',
-        'atm'                 => 'Atm',
-        'null'                => 'Null',
-        'loopback'            => 'Lo',
-        'dialer'              => 'Di',
-        'vlan'                => 'Vlan',
-        'tunnel'              => 'Tunnel',
-        'serviceinstance'     => 'SI',
-        'dwdm'                => 'DWDM',
-        'bundle-ether'        => 'BE',
-    ];
-
-    $if = \LibreNMS\Util\Rewrite::normalizeIfName($if);
-    $if = strtolower($if);
-    $if = str_replace(array_keys($rewrite_shortif), array_values($rewrite_shortif), $if);
-
-    return $if;
-}
-
 function rewrite_generic_hardware($hardware)
 {
     $rewrite_GenericHW = [
         ' Computer Corporation' => '',
-        ' Corporation'          => '',
-        ' Inc.'                 => '',
+        ' Corporation' => '',
+        ' Inc.' => '',
     ];
 
     return str_replace(array_keys($rewrite_GenericHW), array_values($rewrite_GenericHW), $hardware);
@@ -137,10 +106,10 @@ function short_hrDeviceDescr($dev)
     $rewrite_hrDevice = [
         'GenuineIntel:' => '',
         'AuthenticAMD:' => '',
-        'Intel(R)'      => '',
-        'CPU'           => '',
-        '(R)'           => '',
-        '  '            => ' ',
+        'Intel(R)' => '',
+        'CPU' => '',
+        '(R)' => '',
+        '  ' => ' ',
     ];
 
     $dev = str_replace(array_keys($rewrite_hrDevice), array_values($rewrite_hrDevice), $dev);
@@ -164,21 +133,7 @@ function short_port_descr($desc)
 
 function rewrite_adslLineType($adslLineType)
 {
-    $adslLineTypes = [
-        'noChannel'          => 'No Channel',
-        'fastOnly'           => 'Fastpath',
-        'interleavedOnly'    => 'Interleaved',
-        'fastOrInterleaved'  => 'Fast/Interleaved',
-        'fastAndInterleaved' => 'Fast+Interleaved',
-    ];
-
-    foreach ($adslLineTypes as $type => $text) {
-        if ($adslLineType == $type) {
-            $adslLineType = $text;
-        }
-    }
-
-    return $adslLineType;
+    return \LibreNMS\Util\Rewrite::dslLineType($adslLineType);
 }
 
 function ipmiSensorName($hardwareId, $sensorIpmi)
@@ -219,7 +174,7 @@ function ipmiSensorName($hardwareId, $sensorIpmi)
 }
 
 /**
- * @param $descr
+ * @param  $descr
  * @return int
  */
 function get_nagios_state($descr)
@@ -246,7 +201,7 @@ function get_nagios_state($descr)
 }
 
 /**
- * @param $state
+ * @param  $state
  * @return int
  */
 function apc_relay_state($state)
@@ -261,20 +216,6 @@ function apc_relay_state($state)
             return 2;
             break;
     }
-}
-
-/**
- * @param $value
- * @return mixed
- */
-function return_number($value)
-{
-    preg_match('/[\d\.\-]+/', $value, $temp_response);
-    if (! empty($temp_response[0])) {
-        $value = $temp_response[0];
-    }
-
-    return $value;
 }
 
 function parse_entity_state($state, $value)
@@ -310,7 +251,7 @@ function parse_entity_state($state, $value)
         return $data[$state][$value];
     }
 
-    return ['text'=>'na', 'color'=>'default'];
+    return ['text' => 'na', 'color' => 'default'];
 }
 
 function parse_entity_state_alarm($bits)

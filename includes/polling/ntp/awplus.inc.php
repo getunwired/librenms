@@ -13,20 +13,19 @@
 
 use LibreNMS\RRD\RrdDefinition;
 
-$tmp_module = 'ntp';
+$type = 'ntp';
 
 $component = new LibreNMS\Component();
 $options = [];
-$options['filter']['type'] = ['=', $tmp_module];
+$options['filter']['type'] = ['=', $type];
 $options['filter']['disabled'] = ['=', 0];
 $options['filter']['ignore'] = ['=', 0];
-$components = $component->getComponents($device['device_id'], $options);
 
 // We only care about our device id.
-$components = $components[$device['device_id']];
+$components = $component->getComponents($device['device_id'], $options)[$device['device_id']] ?? null;
 
 // Only collect SNMP data if we have enabled components
-if (count($components > 0)) {
+if ($components) {
     // Let's gather the stats..
     $atNtpAssociationEntry = snmpwalk_group($device, 'atNtpAssociationEntry', 'AT-NTP-MIB');
 
@@ -61,7 +60,7 @@ if (count($components > 0)) {
         $rrd['delay'] = str_replace(' milliseconds', '', $rrd['delay']);
         $rrd['delay'] = $rrd['delay'] / 1000; // Convert to seconds
         $rrd['dispersion'] = $atNtpAssociationEntry[$array['UID']]['atNtpAssociationDisp'];
-        $tags = compact('ntp', 'rrd_name', 'rrd_def', 'peer');
+        $tags = compact('type', 'rrd_name', 'rrd_def', 'peer');
         data_update($device, 'ntp', $tags, $rrd);
 
         // Let's print some debugging info.
@@ -82,4 +81,4 @@ if (count($components > 0)) {
 } // end if count components
 
 // Clean-up after yourself!
-unset($type, $components, $component, $options, $tmp_module);
+unset($type, $components, $component, $options, $type);

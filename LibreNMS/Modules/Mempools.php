@@ -25,46 +25,71 @@
 
 namespace LibreNMS\Modules;
 
+use App\Models\Device;
 use App\Models\Mempool;
 use App\Observers\MempoolObserver;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use LibreNMS\DB\SyncsModels;
-use LibreNMS\Interfaces\Discovery\MempoolsDiscovery;
+use LibreNMS\Interfaces\Data\DataStorageInterface;
 use LibreNMS\Interfaces\Module;
 use LibreNMS\Interfaces\Polling\MempoolsPolling;
 use LibreNMS\OS;
+use LibreNMS\Polling\ModuleStatus;
 use LibreNMS\RRD\RrdDefinition;
 use LibreNMS\Util\Number;
-use Log;
 
 class Mempools implements Module
 {
     use SyncsModels;
 
-    public function discover(OS $os)
+    /**
+     * @inheritDoc
+     */
+    public function dependencies(): array
     {
-        if ($os instanceof MempoolsDiscovery) {
-            $mempools = $os->discoverMempools()->filter(function (Mempool $mempool) {
-                if ($mempool->isValid()) {
-                    return true;
-                }
-                Log::debug("Rejecting Mempool $mempool->mempool_index $mempool->mempool_descr: Invalid total value");
-
-                return false;
-            });
-            $this->calculateAvailable($mempools);
-
-            MempoolObserver::observe('\App\Models\Mempool');
-            $this->syncModels($os->getDevice(), 'mempools', $mempools);
-
-            echo PHP_EOL;
-            $mempools->each(function ($mempool) {
-                $this->printMempool($mempool);
-            });
-        }
+        return [];
     }
 
-    public function poll(OS $os)
+    public function shouldDiscover(OS $os, ModuleStatus $status): bool
+    {
+        return $status->isEnabledAndDeviceUp($os->getDevice());
+    }
+
+    public function discover(OS $os): void
+    {
+        $mempools = $os->discoverMempools()->filter(function (Mempool $mempool) {
+            if ($mempool->isValid()) {
+                return true;
+            }
+
+            $reason = 'Not enough data';
+            if ($mempool->mempool_total <= 0) {
+                $reason = "Invalid total value $mempool->mempool_total";
+            }
+
+            Log::debug("Rejecting Mempool $mempool->mempool_index $mempool->mempool_descr: $reason");
+            Log::info('x');
+
+            return false;
+        });
+
+        // check if linux or similar and calculate available ram
+        $this->calculateAvailable($mempools);
+
+        MempoolObserver::observe(\App\Models\Mempool::class);
+        $this->syncModels($os->getDevice(), 'mempools', $mempools);
+
+        Log::info('');
+        $mempools->each($this->printMempool(...));
+    }
+
+    public function shouldPoll(OS $os, ModuleStatus $status): bool
+    {
+        return $status->isEnabledAndDeviceUp($os->getDevice());
+    }
+
+    public function poll(OS $os, DataStorageInterface $datastore): void
     {
         $mempools = $os->getDevice()->mempools;
 
@@ -76,7 +101,7 @@ class Mempools implements Module
             ? $os->pollMempools($mempools)
             : $this->defaultPolling($os, $mempools);
 
-        $this->calculateAvailable($mempools)->each(function (Mempool $mempool) use ($os) {
+        $this->calculateAvailable($mempools)->each(function (Mempool $mempool) use ($os, $datastore) {
             $this->printMempool($mempool);
 
             if (empty($mempool->mempool_class)) {
@@ -103,7 +128,7 @@ class Mempools implements Module
                 'free' => $mempool->mempool_free,
             ];
 
-            data_update($os->getDeviceArray(), 'mempool', $tags, $fields);
+            $datastore->put($os->getDeviceArray(), 'mempool', $tags, $fields);
         });
     }
 
@@ -131,18 +156,34 @@ class Mempools implements Module
         return $mempools;
     }
 
-    public function cleanup(OS $os)
+    public function dataExists(Device $device): bool
     {
-        $os->getDevice()->mempools()->delete();
+        return $device->mempools()->exists();
+    }
+
+    public function cleanup(Device $device): int
+    {
+        return $device->mempools()->delete();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function dump(Device $device, string $type): ?array
+    {
+        return [
+            'mempools' => $device->mempools()->orderBy('mempool_type')->orderBy('mempool_id')
+                ->get()->map->makeHidden(['device_id', 'mempool_id']),
+        ];
     }
 
     /**
      * Calculate available memory.  This is free + buffers + cached.
      *
      * @param  \Illuminate\Support\Collection  $mempools
-     * @return \Illuminate\Support\Collection|void
+     * @return \Illuminate\Support\Collection
      */
-    private function calculateAvailable(Collection $mempools)
+    private function calculateAvailable(Collection $mempools): Collection
     {
         if ($mempools->count() > 2) { // optimization
             $system = null;
@@ -177,23 +218,26 @@ class Mempools implements Module
 
             if ($system !== null) {
                 $old = Number::formatBi($system->mempool_free);
-                $system->fillUsage(($system->mempool_used - $buffers - $cached) / $system->mempool_precision, $system->mempool_total / $system->mempool_precision);
-                $new = Number::formatBi($system->mempool_free);
-                Log::debug("Free memory adjusted by availability calculation: {$old} -> {$new}\n");
+                $available_used = $system->mempool_used - $buffers - $cached;
+                if ($available_used >= 0) {
+                    $system->fillUsage($available_used, $system->mempool_total, multiplier: 1);
+                    $new = Number::formatBi($system->mempool_free);
+                    Log::debug("Free memory adjusted by availability calculation: {$old} -> {$new}\n");
+                }
             }
         }
 
         return $mempools;
     }
 
-    private function printMempool(Mempool $mempool)
+    private function printMempool(Mempool $mempool): void
     {
-        echo "$mempool->mempool_type [$mempool->mempool_class]: $mempool->mempool_descr: $mempool->mempool_perc%";
+        $status = "$mempool->mempool_descr ($mempool->mempool_class): $mempool->mempool_perc%";
         if ($mempool->mempool_total != 100) {
             $used = Number::formatBi($mempool->mempool_used);
             $total = Number::formatBi($mempool->mempool_total);
-            echo "  {$used} / {$total}";
+            $status .= "  $used / $total";
         }
-        echo PHP_EOL;
+        Log::info($status);
     }
 }

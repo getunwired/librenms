@@ -10,11 +10,11 @@
                     "version": "V1.50 2012-06-13",
                     "hardware": "EUROstore [ES-6642B]",
                     "features": "Controller: Areca ARC-8066",
+                    "location": "<private>",
                     "os": "eurostor",
                     "type": "appliance",
                     "serial": "A116EHDEPR900010",
-                    "icon": "eurostor.svg",
-                    "location": "<private>"
+                    "icon": "eurostor.svg"
                 }
             ]
         },
@@ -36,7 +36,6 @@
                     "ifSpeed": null,
                     "ifSpeed_prev": null,
                     "ifConnectorPresent": null,
-                    "ifPromiscuousMode": null,
                     "ifOperStatus": "up",
                     "ifOperStatus_prev": null,
                     "ifAdminStatus": null,
@@ -46,15 +45,11 @@
                     "ifType": "ethernetCsmacd",
                     "ifAlias": "Raid Management Through Ethernet",
                     "ifPhysAddress": null,
-                    "ifHardType": null,
                     "ifLastChange": 0,
-                    "ifVlan": "",
+                    "ifVlan": null,
                     "ifTrunk": null,
-                    "counter_in": null,
-                    "counter_out": null,
                     "ignore": 0,
                     "disabled": 0,
-                    "detailed": 0,
                     "deleted": 0,
                     "pagpOperationMode": null,
                     "pagpPortState": null,
@@ -145,7 +140,6 @@
                     "ifSpeed": 100000000,
                     "ifSpeed_prev": null,
                     "ifConnectorPresent": null,
-                    "ifPromiscuousMode": null,
                     "ifOperStatus": "up",
                     "ifOperStatus_prev": "up",
                     "ifAdminStatus": "up",
@@ -155,15 +149,11 @@
                     "ifType": "ethernetCsmacd",
                     "ifAlias": "Raid Management Through Ethernet",
                     "ifPhysAddress": "001b4d019a7c",
-                    "ifHardType": null,
                     "ifLastChange": 0,
-                    "ifVlan": "",
+                    "ifVlan": null,
                     "ifTrunk": null,
-                    "counter_in": null,
-                    "counter_out": null,
                     "ignore": 0,
                     "disabled": 0,
-                    "detailed": 0,
                     "deleted": 0,
                     "pagpOperationMode": null,
                     "pagpPortState": null,
@@ -265,6 +255,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -289,6 +280,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -313,6 +305,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -337,6 +330,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -361,6 +355,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -385,6 +380,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -409,6 +405,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -433,6 +430,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -457,6 +455,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -481,6 +480,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -505,6 +505,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -529,6 +530,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -553,6 +555,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -577,6 +580,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -601,6 +605,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -625,6 +630,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -649,6 +655,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -673,6 +680,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -697,6 +705,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -721,6 +730,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -745,6 +755,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -769,6 +780,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -793,6 +805,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -817,6 +830,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -841,6 +855,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -865,6 +880,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -889,6 +905,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -913,6 +930,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -937,6 +955,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -961,6 +980,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -985,6 +1005,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1009,6 +1030,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1033,6 +1055,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1057,6 +1080,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1081,6 +1105,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1105,6 +1130,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1129,6 +1155,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1153,6 +1180,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1177,6 +1205,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1201,6 +1230,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1225,6 +1255,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1249,6 +1280,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1273,6 +1305,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1297,6 +1330,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1321,6 +1355,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1345,6 +1380,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1369,6 +1405,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1393,6 +1430,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1417,6 +1455,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1441,6 +1480,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1465,6 +1505,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1489,6 +1530,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1513,6 +1555,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "raidMember"
                 },
                 {
@@ -1537,6 +1580,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1561,6 +1605,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1585,6 +1630,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1609,6 +1655,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1633,6 +1680,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1657,6 +1705,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1681,6 +1730,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1705,6 +1755,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1729,6 +1780,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1753,6 +1805,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1777,6 +1830,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1801,6 +1855,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1825,6 +1880,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1849,6 +1905,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1873,6 +1930,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1897,6 +1955,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1921,6 +1980,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1945,6 +2005,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1969,6 +2030,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -1993,6 +2055,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2017,6 +2080,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2041,6 +2105,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2065,6 +2130,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2089,6 +2155,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2113,6 +2180,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2137,6 +2205,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2161,6 +2230,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2185,6 +2255,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2209,6 +2280,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2233,6 +2305,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2257,6 +2330,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2281,6 +2355,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2305,6 +2380,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2329,6 +2405,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2353,6 +2430,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2377,6 +2455,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2401,6 +2480,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2425,6 +2505,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2449,6 +2530,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2473,6 +2555,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2497,6 +2580,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2521,6 +2605,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2545,6 +2630,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2569,6 +2655,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2593,6 +2680,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2617,6 +2705,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2641,6 +2730,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2665,6 +2755,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2689,6 +2780,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2713,6 +2805,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2737,6 +2830,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2761,6 +2855,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2785,6 +2880,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2809,6 +2905,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2833,6 +2930,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2857,6 +2955,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 },
                 {
@@ -2881,6 +2980,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 }
             ],
@@ -2912,6 +3012,868 @@
                     "state_draw_graph": 0,
                     "state_value": 3,
                     "state_generic_value": 2
+                }
+            ]
+        },
+        "poller": "matches discovery"
+    },
+    "entity-physical": {
+        "discovery": {
+            "entPhysical": [
+                {
+                    "entPhysicalIndex": 1,
+                    "entPhysicalDescr": "Eurostore ES-6642B",
+                    "entPhysicalClass": "chassis",
+                    "entPhysicalName": null,
+                    "entPhysicalHardwareRev": "V1.50 2012-02-17",
+                    "entPhysicalFirmwareRev": "V1.50 2012-06-13",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": null,
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": null,
+                    "entPhysicalModelName": "ES-6642B",
+                    "entPhysicalVendorType": "ARC-8066",
+                    "entPhysicalSerialNum": "A116EHDEPR900010",
+                    "entPhysicalContainedIn": 0,
+                    "entPhysicalParentRelPos": -1,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 2,
+                    "entPhysicalDescr": "SAS2 E          -.B0.01.b001",
+                    "entPhysicalClass": "backplane",
+                    "entPhysicalName": null,
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": null,
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": null,
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": null,
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": null,
+                    "entPhysicalContainedIn": 1,
+                    "entPhysicalParentRelPos": 1,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 3,
+                    "entPhysicalDescr": "SLOT 01",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJXE0DG",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 1,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 4,
+                    "entPhysicalDescr": "SLOT 02",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK2ZPAA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 2,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 5,
+                    "entPhysicalDescr": "SLOT 03",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK3G8XA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 3,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 6,
+                    "entPhysicalDescr": "SLOT 04",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK42K3A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 4,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 7,
+                    "entPhysicalDescr": "SLOT 05",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X2ZA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 5,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 8,
+                    "entPhysicalDescr": "SLOT 06",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK40B1A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 6,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 9,
+                    "entPhysicalDescr": "SLOT 07",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "Failed",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK47XRA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 7,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 10,
+                    "entPhysicalDescr": "SLOT 08",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X60A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 8,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 11,
+                    "entPhysicalDescr": "SLOT 09",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK32ZYG",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 9,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 12,
+                    "entPhysicalDescr": "SLOT 10",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK4LR3A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 10,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 13,
+                    "entPhysicalDescr": "SLOT 11",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJVNSMG",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 11,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 14,
+                    "entPhysicalDescr": "SLOT 12",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK3G04A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 12,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 15,
+                    "entPhysicalDescr": "SLOT 13",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X4JA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 13,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 16,
+                    "entPhysicalDescr": "SLOT 14",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X9NA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 14,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 17,
+                    "entPhysicalDescr": "SLOT 15",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK47VDA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 15,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 18,
+                    "entPhysicalDescr": "SLOT 16",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJZBBXG",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 16,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 19,
+                    "entPhysicalDescr": "SLOT 17",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X2WA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 17,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 20,
+                    "entPhysicalDescr": "SLOT 18",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X8SA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 18,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 21,
+                    "entPhysicalDescr": "SLOT 19",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJYPHRG",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 19,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 22,
+                    "entPhysicalDescr": "SLOT 20",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK4JHHA",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 20,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 23,
+                    "entPhysicalDescr": "SLOT 21",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK2N80A",
+                    "entPhysicalContainedIn": 2,
+                    "entPhysicalParentRelPos": 21,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 24,
+                    "entPhysicalDescr": "SAS2 E          -.B0.01.b001",
+                    "entPhysicalClass": "backplane",
+                    "entPhysicalName": null,
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": null,
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": null,
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": null,
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": null,
+                    "entPhysicalContainedIn": 1,
+                    "entPhysicalParentRelPos": 2,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 25,
+                    "entPhysicalDescr": "SLOT 22",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X3UA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 1,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 26,
+                    "entPhysicalDescr": "SLOT 23",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJY56XG",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 2,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 27,
+                    "entPhysicalDescr": "SLOT 24",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK4LJ3A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 3,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 28,
+                    "entPhysicalDescr": "SLOT 25",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK3EZUA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 4,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 29,
+                    "entPhysicalDescr": "SLOT 26",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0331YHG5W5SA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 5,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 30,
+                    "entPhysicalDescr": "SLOT 27",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK28TVA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 6,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 31,
+                    "entPhysicalDescr": "SLOT 28",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK47X0A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 7,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 32,
+                    "entPhysicalDescr": "SLOT 29",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK26G2A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 8,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 33,
+                    "entPhysicalDescr": "SLOT 30",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X3LA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 9,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 34,
+                    "entPhysicalDescr": "SLOT 31",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHJZ9P1G",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 10,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 35,
+                    "entPhysicalDescr": "SLOT 32",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK3P2TA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 11,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 36,
+                    "entPhysicalDescr": "SLOT 33",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK02BLG",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 12,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 37,
+                    "entPhysicalDescr": "SLOT 34",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK4G3DA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 13,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 38,
+                    "entPhysicalDescr": "SLOT 35",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1NG5A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 14,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 39,
+                    "entPhysicalDescr": "SLOT 36",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "HGST HUS726T6TALE6L4",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "VKGNW460",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "Hot Spare",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "V8K80VNR",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 15,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 40,
+                    "entPhysicalDescr": "SLOT 37",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK0G7MA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 16,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 41,
+                    "entPhysicalDescr": "SLOT 38",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK29UAA",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 17,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 42,
+                    "entPhysicalDescr": "SLOT 39",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK4PS5G",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 18,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 43,
+                    "entPhysicalDescr": "SLOT 40",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X69A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 19,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 44,
+                    "entPhysicalDescr": "SLOT 41",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK1X36A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 20,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
+                },
+                {
+                    "entPhysicalIndex": 45,
+                    "entPhysicalDescr": "SLOT 42",
+                    "entPhysicalClass": "container",
+                    "entPhysicalName": "Hitachi HUA723030ALA640",
+                    "entPhysicalHardwareRev": null,
+                    "entPhysicalFirmwareRev": "MKAOAA10",
+                    "entPhysicalSoftwareRev": null,
+                    "entPhysicalAlias": "RaidSet Member",
+                    "entPhysicalAssetID": null,
+                    "entPhysicalIsFRU": "true",
+                    "entPhysicalModelName": null,
+                    "entPhysicalVendorType": null,
+                    "entPhysicalSerialNum": "MK0371YHK3Z21A",
+                    "entPhysicalContainedIn": 24,
+                    "entPhysicalParentRelPos": 21,
+                    "entPhysicalMfgName": null,
+                    "ifIndex": null
                 }
             ]
         },

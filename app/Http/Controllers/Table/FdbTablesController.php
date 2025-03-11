@@ -31,21 +31,22 @@ use App\Models\PortsFdb;
 use App\Models\Vlan;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use LibreNMS\Util\IP;
-use LibreNMS\Util\Rewrite;
-use LibreNMS\Util\Url;
+use LibreNMS\Util\Mac;
 
 class FdbTablesController extends TableController
 {
     protected $macCountCache = [];
-    protected $ipCache = [];
 
     protected function rules()
     {
         return [
             'port_id' => 'nullable|integer',
             'device_id' => 'nullable|integer',
-            'serachby' => 'in:mac,vlan,dnsname,ip,description,first_seen,last_seen',
+            'searchby' => 'in:mac,vlan,dnsname,ip,description,first_seen,last_seen,vendor,',
             'dns' => 'nullable|in:true,false',
         ];
     }
@@ -66,7 +67,9 @@ class FdbTablesController extends TableController
      */
     protected function baseQuery($request)
     {
-        return PortsFdb::hasAccess($request->user())->with(['device', 'port', 'vlan'])->select('ports_fdb.*');
+        return PortsFdb::hasAccess($request->user())
+            ->with(['device', 'port', 'vlan', 'ipv4Addresses'])
+            ->select('ports_fdb.*');
     }
 
     /**
@@ -77,25 +80,29 @@ class FdbTablesController extends TableController
      */
     protected function search($search, $query, $fields = [])
     {
-        if ($search = trim(\Request::get('searchPhrase'))) {
+        if ($search = trim(\Request::get('searchPhrase') ?? '')) {
             $mac_search = '%' . str_replace([':', ' ', '-', '.', '0x'], '', $search) . '%';
-            switch (\Request::get('searchby')) {
+            switch (\Request::get('searchby') ?? '') {
                 case 'mac':
                     return $query->where('ports_fdb.mac_address', 'like', $mac_search);
                 case 'vlan':
-                    return $query->whereIn('ports_fdb.vlan_id', $this->findVlans($search));
+                    return $query->whereIntegerInRaw('ports_fdb.vlan_id', $this->findVlans($search));
                 case 'dnsname':
                     $search = gethostbyname($search);
                     // no break
                 case 'ip':
                     return $query->whereIn('ports_fdb.mac_address', $this->findMacs($search));
                 case 'description':
-                    return $query->whereIn('ports_fdb.port_id', $this->findPorts($search));
+                    return $query->whereIntegerInRaw('ports_fdb.port_id', $this->findPorts($search));
+                case 'vendor':
+                    $vendor_ouis = $this->ouisFromVendor($search);
+
+                    return $this->findPortsByOui($vendor_ouis, $query);
                 default:
                     return $query->where(function ($query) use ($search, $mac_search) {
                         $query->where('ports_fdb.mac_address', 'like', $mac_search)
-                            ->orWhereIn('ports_fdb.port_id', $this->findPorts($search))
-                            ->orWhereIn('ports_fdb.vlan_id', $this->findVlans($search))
+                            ->orWhereIntegerInRaw('ports_fdb.port_id', $this->findPorts($search))
+                            ->orWhereIntegerInRaw('ports_fdb.vlan_id', $this->findVlans($search))
                             ->orWhereIn('ports_fdb.mac_address', $this->findMacs($search));
                     });
             }
@@ -153,17 +160,18 @@ class FdbTablesController extends TableController
      */
     public function formatItem($fdb_entry)
     {
-        $ip_info = $this->findIps($fdb_entry->mac_address);
+        $mac = Mac::parse($fdb_entry->mac_address);
+        $ips = $fdb_entry->ipv4Addresses->pluck('ipv4_address');
 
         $item = [
-            'device' => $fdb_entry->device ? Url::deviceLink($fdb_entry->device) : '',
-            'mac_address' => Rewrite::readableMac($fdb_entry->mac_address),
-            'mac_oui' => Rewrite::readableOUI($fdb_entry->mac_address),
-            'ipv4_address' => $ip_info['ips']->implode(', '),
+            'device' => Blade::render('<x-device-link :device="$device"/>', ['device' => $fdb_entry->device]),
+            'mac_address' => $mac->readable(),
+            'mac_oui' => $mac->vendor(),
+            'ipv4_address' => $ips->implode(', '),
             'interface' => '',
             'vlan' => $fdb_entry->vlan ? $fdb_entry->vlan->vlan_vlan : '',
             'description' => '',
-            'dnsname' => $ip_info['dns'],
+            'dnsname' => $this->resolveDns($ips),
             'first_seen' => 'unknown',
             'last_seen' => 'unknown',
         ];
@@ -177,10 +185,10 @@ class FdbTablesController extends TableController
         }
 
         if ($fdb_entry->port) {
-            $item['interface'] = Url::portLink($fdb_entry->port, $fdb_entry->port->getShortLabel());
+            $item['interface'] = Blade::render('<x-port-link :port="$port">{{ $port->getShortLabel() }}</x-port-link>', ['port' => $fdb_entry->port]);
             $item['description'] = $fdb_entry->port->ifAlias;
-            if ($fdb_entry->port->ifInErrors > 0 || $fdb_entry->port->ifOutErrors > 0) {
-                $item['interface'] .= ' ' . Url::portLink($fdb_entry->port, '<i class="fa fa-flag fa-lg" style="color:red" aria-hidden="true"></i>');
+            if ($fdb_entry->port->ifInErrors_delta > 0 || $fdb_entry->port->ifOutErrors_delta > 0) {
+                $item['interface'] .= Blade::render(' <x-port-link :port="$port"><i class="fa fa-flag fa-lg" style="color:red" aria-hidden="true"></i></x-port-link>', ['port' => $fdb_entry->port]);
             }
             if ($this->getMacCount($fdb_entry->port) == 1) {
                 // only one mac on this port, likely the endpoint
@@ -193,9 +201,9 @@ class FdbTablesController extends TableController
 
     /**
      * @param  string  $ip
-     * @return Builder
+     * @return Collection
      */
-    protected function findMacs($ip)
+    protected function findMacs($ip): Collection
     {
         $port_id = \Request::get('port_id');
         $device_id = \Request::get('device_id');
@@ -212,9 +220,9 @@ class FdbTablesController extends TableController
 
     /**
      * @param  string  $vlan
-     * @return Builder
+     * @return Collection
      */
-    protected function findVlans($vlan)
+    protected function findVlans($vlan): Collection
     {
         $port_id = \Request::get('port_id');
         $device_id = \Request::get('device_id');
@@ -233,9 +241,9 @@ class FdbTablesController extends TableController
 
     /**
      * @param  string  $ifAlias
-     * @return Builder
+     * @return Collection
      */
-    protected function findPorts($ifAlias)
+    protected function findPorts($ifAlias): Collection
     {
         $port_id = \Request::get('port_id');
         $device_id = \Request::get('device_id');
@@ -250,38 +258,22 @@ class FdbTablesController extends TableController
             ->pluck('port_id');
     }
 
-    /**
-     * @param  string  $mac_address
-     * @return \Illuminate\Support\Collection
-     */
-    protected function findIps($mac_address)
+    private function resolveDns(Collection $ips): string
     {
-        if (! isset($this->ipCache[$mac_address])) {
-            $ips = Ipv4Mac::where('mac_address', $mac_address)
-                ->groupBy('ipv4_address')
-                ->pluck('ipv4_address');
+        $dns = 'N/A';
 
-            $dns = 'N/A';
-
-            // only fetch DNS if the column is visible
-            if (\Request::get('dns') == 'true') {
-                // don't try too many dns queries, this is the slowest part
-                foreach ($ips->take(3) as $ip) {
-                    $hostname = gethostbyaddr($ip);
-                    if (! IP::isValid($hostname)) {
-                        $dns = $hostname;
-                        break;
-                    }
+        // only fetch DNS if the column is visible
+        if (\Request::get('dns') == 'true') {
+            // don't try too many dns queries, this is the slowest part
+            foreach ($ips->take(3) as $ip) {
+                $hostname = gethostbyaddr($ip);
+                if (! IP::isValid($hostname)) {
+                    return $hostname;
                 }
             }
-
-            $this->ipCache[$mac_address] = [
-                'ips' => $ips,
-                'dns' => $dns,
-            ];
         }
 
-        return $this->ipCache[$mac_address];
+        return $dns;
     }
 
     /**
@@ -295,5 +287,33 @@ class FdbTablesController extends TableController
         }
 
         return $this->macCountCache[$port->port_id];
+    }
+
+    /**
+     * Get the OUI list for a specific vendor
+     *
+     * @param  string  $vendor
+     * @return array
+     */
+    protected function ouisFromVendor(string $vendor): array
+    {
+        return DB::table('vendor_ouis')
+            ->where('vendor', 'LIKE', '%' . $vendor . '%')
+            ->pluck('oui')
+            ->toArray();
+    }
+
+    /**
+     * Get all port ids from vendor OUIs
+     */
+    protected function findPortsByOui(array $vendor_ouis, Builder $query): Builder
+    {
+        $query->where(function (Builder $query) use ($vendor_ouis) {
+            foreach ($vendor_ouis as $oui) {
+                $query->orWhere('ports_fdb.mac_address', 'LIKE', "$oui%");
+            }
+        });
+
+        return $query; // Return the query builder instance
     }
 }

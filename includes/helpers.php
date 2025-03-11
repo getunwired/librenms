@@ -68,18 +68,6 @@ if (! function_exists('array_pairs')) {
     }
 }
 
-/**
- * Cast string to int or float.
- * Returns 0 if string is not numeric
- *
- * @param  string  $number
- * @return float|int
- */
-function cast_number($number)
-{
-    return \LibreNMS\Util\Number::cast($number);
-}
-
 if (! function_exists('trans_fb')) {
     /**
      * Translate the given message with a fallback string if none exists.
@@ -93,5 +81,41 @@ if (! function_exists('trans_fb')) {
     function trans_fb($key, $fallback, $replace = [], $locale = null)
     {
         return ($key === ($translation = trans($key, $replace, $locale))) ? $fallback : $translation;
+    }
+}
+
+if (! function_exists('preg_match_any')) {
+    /**
+     * Check an array of regexes against a subject if any match, return true
+     *
+     * @param  string  $subject  the string to match against
+     * @param  array|string  $regexes  an array of regexes or single regex to check
+     * @return bool if any of the regexes matched, return true
+     */
+    function preg_match_any($subject, $regexes)
+    {
+        foreach ((array) $regexes as $regex) {
+            if (preg_match($regex, $subject)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (! function_exists('toast')) {
+    /**
+     * send a toastr popup or return ToastInterface
+     */
+    function toast(?string $title = null, ?string $message = null, string $level = 'info', ?array $options = null)
+    {
+        $toast = app(\App\Http\Interfaces\ToastInterface::class);
+
+        if (! is_null($message)) {
+            return $toast->message($title, $message, $level, $options);
+        }
+
+        return $toast;
     }
 }

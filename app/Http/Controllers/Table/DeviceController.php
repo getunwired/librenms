@@ -54,7 +54,7 @@ class DeviceController extends TableController
             'disabled' => 'nullable|in:0,1',
             'ignore' => 'nullable|in:0,1',
             'disable_notify' => 'nullable|in:0,1',
-            'group' => 'nullable|int',
+            'group' => ['nullable', 'regex:/^(\d+|none)$/'],
             'poller_group' => 'nullable|int',
             'device_id' => 'nullable|int',
         ];
@@ -67,7 +67,7 @@ class DeviceController extends TableController
 
     protected function searchFields($request)
     {
-        return ['sysName', 'hostname', 'hardware', 'os', 'locations.location'];
+        return ['sysName', 'hostname', 'display', 'hardware', 'os', 'locations.location'];
     }
 
     protected function sortFields($request)
@@ -93,7 +93,9 @@ class DeviceController extends TableController
     protected function baseQuery($request)
     {
         /** @var Builder $query */
-        $query = Device::hasAccess($request->user())->with('location')->withCount(['ports', 'sensors', 'wirelessSensors']);
+        $query = Device::hasAccess($request->user())
+            ->with(['location', 'groups'])
+            ->withCount(['ports', 'sensors', 'wirelessSensors']);
 
         // if searching or sorting the location field, join the locations table
         if ($request->get('searchPhrase') || in_array('location', array_keys($request->get('sort', [])))) {
@@ -102,9 +104,13 @@ class DeviceController extends TableController
 
         // filter device group, not sure this is the most efficient query
         if ($group = $request->get('group')) {
-            $query->whereHas('groups', function ($query) use ($group) {
-                $query->where('id', $group);
-            });
+            if ($group == 'none') {
+                $query->whereDoesntHave('groups');
+            } else {
+                $query->whereHas('groups', function ($query) use ($group) {
+                    $query->where('id', $group);
+                });
+            }
         }
 
         if ($request->get('poller_group') !== null) {
@@ -149,10 +155,10 @@ class DeviceController extends TableController
             'icon' => '<img src="' . asset($device->icon) . '" title="' . pathinfo($device->icon, PATHINFO_FILENAME) . '">',
             'hostname' => $this->getHostname($device),
             'metrics' => $this->getMetrics($device),
-            'hardware' => Rewrite::ciscoHardware($device),
+            'hardware' => htmlspecialchars(Rewrite::ciscoHardware($device)),
             'os' => $this->getOsText($device),
-            'uptime' => (! $device->status && ! $device->last_polled) ? __('Never polled') : Time::formatInterval($device->status ? $device->uptime : $device->last_polled->diffInSeconds(), 'short'),
-            'location' => $this->getLocation($device),
+            'uptime' => (! $device->status && ! $device->last_polled) ? __('Never polled') : Time::formatInterval($device->status ? $device->uptime : $device->downSince()->diffInSeconds(), true),
+            'location' => htmlspecialchars($this->getLocation($device)),
             'actions' => view('device.actions', ['actions' => $this->getActions($device)])->__toString(),
             'device_id' => $device->device_id,
         ];
@@ -192,7 +198,7 @@ class DeviceController extends TableController
         } elseif ($device->status == 0) {
             return 'label-danger';
         } else {
-            $warning_time = \LibreNMS\Config::get('uptime_warning', 84600);
+            $warning_time = \LibreNMS\Config::get('uptime_warning', 86400);
             if ($device->uptime < $warning_time && $device->uptime != 0) {
                 return 'label-warning';
             }
@@ -219,10 +225,10 @@ class DeviceController extends TableController
      */
     private function getOsText($device)
     {
-        $os_text = Config::getOsSetting($device->os, 'text');
+        $os_text = htmlspecialchars(Config::getOsSetting($device->os, 'text'));
 
         if ($this->isDetailed()) {
-            $os_text .= '<br />' . $device->version . ($device->features ? " ($device->features)" : '');
+            $os_text .= '<br />' . htmlspecialchars($device->version . ($device->features ? " ($device->features)" : ''));
         }
 
         return $os_text;
@@ -279,9 +285,11 @@ class DeviceController extends TableController
      */
     private function getLocation($device)
     {
+        $location = $device->location ?? '';
+
         return extension_loaded('mbstring')
-            ? mb_substr($device->location, 0, 32, 'utf8')
-            : substr($device->location, 0, 32);
+            ? mb_substr($location, 0, 32, 'utf8')
+            : substr($location, 0, 32);
     }
 
     private function getActions(Device $device): array

@@ -38,7 +38,7 @@ $divisor = 1;
 
 // Adva Network Port dBm
 foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
-    if ($entry['cmEthernetNetPortMediaType'] == 'fiber') {
+    if (isset($entry['cmEthernetNetPortMediaType']) && $entry['cmEthernetNetPortMediaType'] == 'fiber') {
         // Discover receive power level
         $oidRx = '.1.3.6.1.4.1.2544.1.12.5.1.5.1.34.' . $index . '.3';
         $oidTx = '.1.3.6.1.4.1.2544.1.12.5.1.5.1.33.' . $index . '.3';
@@ -50,7 +50,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
             $entPhysicalIndex_measured = 'ports';
             $descrRx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetNetPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetNetPortIfIndex']) . ' Rx Power';
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidRx,
@@ -72,7 +72,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
             // Discover transmit power level
             $descrTx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetNetPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetNetPortIfIndex']) . ' Tx Power';
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidTx,
@@ -94,7 +94,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
     }
 
     // Adva Access Ports dBm
-    if ($entry['cmEthernetAccPortMediaType'] == 'fiber') {
+    if (isset($entry['cmEthernetAccPortMediaType']) && $entry['cmEthernetAccPortMediaType'] == 'fiber') {
         //Discover receive power level
         $oidRx = '.1.3.6.1.4.1.2544.1.12.5.1.1.1.34.' . $index . '.3';
         $oidTx = '.1.3.6.1.4.1.2544.1.12.5.1.1.1.33.' . $index . '.3';
@@ -107,7 +107,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
             $descrRx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetAccPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetAccPortIfIndex']) . ' Rx Power';
 
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidRx,
@@ -129,7 +129,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
             $descrTx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetAccPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetAccPortIfIndex']) . ' Tx Power';
 
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidTx,
@@ -151,7 +151,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
     }
 
     // Adva Traffic Port dBm
-    if ($entry['cmEthernetTrafficPortMediaType'] == 'fiber') {
+    if (isset($entry['cmEthernetTrafficPortMediaType']) && $entry['cmEthernetTrafficPortMediaType'] == 'fiber') {
         //Discover receivn power level
         $oidRx = '.1.3.6.1.4.1.2544.1.12.5.1.21.1.34.' . $index . '.3';
         $oidTx = '.1.3.6.1.4.1.2544.1.12.5.1.21.1.33.' . $index . '.3';
@@ -163,7 +163,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
             $entPhysicalIndex_measured = 'ports';
             $descrRx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetTrafficPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetTrafficPortIfIndex']) . ' Rx Power';
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidRx,
@@ -184,7 +184,7 @@ foreach ($pre_cache['adva_fsp150_ports'] as $index => $entry) {
 
             $descrTx = ($pre_cache['adva_fsp150_ifName'][$entry['cmEthernetTrafficPortIfIndex']]['ifName'] ?? 'ifIndex ' . $entry['cmEthernetTrafficPortIfIndex']) . ' Tx Power';
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'dbm',
                 $device,
                 $oidTx,

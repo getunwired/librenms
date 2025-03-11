@@ -51,7 +51,7 @@ if (isset($options['h'])) {
         Example: ./validate.php -g mail.
 
         ";
-    exit;
+    exit(1);
 }
 
 if (function_exists('posix_getuid') && posix_getuid() === 0) {
@@ -62,7 +62,7 @@ if (function_exists('posix_getuid') && posix_getuid() === 0) {
 // Check autoload
 if (! file_exists('vendor/autoload.php')) {
     print_fail('Composer has not been run, dependencies are missing', './scripts/composer_wrapper.php install --no-dev');
-    exit;
+    exit(1);
 }
 
 require_once 'vendor/autoload.php';
@@ -80,7 +80,7 @@ register_shutdown_function(function () {
         spl_autoload_register(function ($class) {
             @include str_replace('\\', '/', $class) . '.php';
         });
-        print_header(version_info());
+        print_header();
     }
 });
 
@@ -114,17 +114,17 @@ if ($validator->getGroupStatus('dependencies') == ValidationResult::FAILURE) {
 }
 
 if ($pre_checks_failed) {
-    exit;
+    exit(1);
 }
 
-$init_modules = [];
+$init_modules = ['nodb'];
 require 'includes/init.php';
 
 // make sure install_dir is set correctly, or the next includes will fail
 if (! file_exists(Config::get('install_dir') . '/.env')) {
     $suggested = realpath(__DIR__);
     print_fail('\'install_dir\' config setting is not set correctly.', "It should probably be set to: $suggested");
-    exit;
+    exit(1);
 }
 
 if (\LibreNMS\DB\Eloquent::isConnected()) {
@@ -134,7 +134,7 @@ if (\LibreNMS\DB\Eloquent::isConnected()) {
 }
 
 $precheck_complete = true; // disable shutdown function
-print_header($validator->getVersions());
+print_header();
 
 if (isset($options['g'])) {
     $modules = explode(',', $options['g']);
@@ -144,41 +144,35 @@ if (isset($options['g'])) {
     $modules = []; // all modules
 }
 
+// the code below may not show the database check above, always print it
+if (! in_array('database', $modules)) {
+    $validator->printResults('database');
+}
+
 // run checks
 $validator->validate($modules, isset($options['s']) || ! empty($modules));
 
-function print_header($versions)
+exit($validator->getStatus() ? 0 : 1);
+
+function print_header()
 {
     $output = ob_get_clean();
     @ob_end_clean();
 
-    echo <<< EOF
-====================================
-Component | Version
---------- | -------
-LibreNMS  | ${versions['local_ver']}
-DB Schema | ${versions['db_schema']}
-PHP       | ${versions['php_ver']}
-Python    | ${versions['python_ver']}
-MySQL     | ${versions['mysql_ver']}
-RRDTool   | ${versions['rrdtool_ver']}
-SNMP      | ${versions['netsnmp_ver']}
-====================================
-
-$output
-EOF;
+    echo \LibreNMS\Util\Version::get()->header() . PHP_EOL;
+    echo $output;
 }
 
 // output matches that of ValidationResult
 function print_fail($msg, $fix = null)
 {
-    c_echo("[%RFAIL%n]  $msg");
+    echo "[\033[31;1mFAIL\033[0m]  $msg";
     if ($fix && strlen($msg) > 72) {
         echo PHP_EOL . '       ';
     }
 
     if (! empty($fix)) {
-        c_echo(" [%BFIX%n] %B$fix%n");
+        echo " [\033[34;1mFIX\033[0m] \033[34;1m$fix\033[0m";
     }
     echo PHP_EOL;
 }

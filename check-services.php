@@ -13,7 +13,9 @@
  * the source code distribution for details.
  */
 
+use LibreNMS\Config;
 use LibreNMS\Data\Store\Datastore;
+use LibreNMS\Enum\Severity;
 use LibreNMS\Util\Debug;
 
 $init_modules = [];
@@ -33,7 +35,7 @@ $polled_services = 0;
 
 $where = '';
 $params = [];
-if ($options['h']) {
+if (isset($options['h'])) {
     if (is_numeric($options['h'])) {
         $where = 'AND `S`.`device_id` = ?';
         $params[] = (int) $options['h'];
@@ -46,6 +48,14 @@ if ($options['h']) {
             $params[] = $options['h'];
         }
     }
+} else {
+    $scheduler = Config::get('schedule_type.services');
+    if ($scheduler != 'legacy' && $scheduler != 'cron') {
+        if (Debug::isEnabled()) {
+            echo "Services are not enabled for cron scheduling\n";
+        }
+        exit(0);
+    }
 }
 
 $sql = 'SELECT D.*,S.*,attrib_value  FROM `devices` AS D'
@@ -57,7 +67,7 @@ foreach (dbFetchRows($sql, $params) as $service) {
     // Run the polling function if service is enabled and the associated device is up, "Disable ICMP Test" option is not enabled,
     // or service hostname/ip is different from associated device
     if (! $service['service_disabled'] && ($service['status'] == 1 || ($service['status'] == 0 && $service['status_reason'] === 'snmp') ||
-        $service['attrib_value'] === 'true' || ($service['service_ip'] !== $service['hostname'] &&
+        $service['attrib_value'] === 'true' || (! is_null($service['service_ip']) && $service['service_ip'] !== $service['hostname'] &&
         $service['service_ip'] !== inet6_ntop($service['ip'])))) {
         poll_service($service);
         $polled_services++;
@@ -65,12 +75,12 @@ foreach (dbFetchRows($sql, $params) as $service) {
         if (! $service['service_disabled']) {
             d_echo("\nService check - " . $service['service_id'] . "\nSkipping service check because device "
                 . $service['hostname'] . " is down due to icmp.\n");
-            Log::event(
+            \App\Models\Eventlog::log(
                 "Service check - {$service['service_desc']} ({$service['service_id']}) -
                 Skipping service check because device {$service['hostname']} is down due to icmp",
                 $service['device_id'],
                 'service',
-                4,
+                Severity::Warning,
                 $service['service_id']
             );
         } else {

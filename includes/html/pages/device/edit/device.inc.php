@@ -6,7 +6,7 @@ require_once 'includes/html/modal/device_maintenance.inc.php';
 
 $device_model = Device::find($device['device_id']);
 
-if ($_POST['editing']) {
+if (! empty($_POST['editing'])) {
     if (Auth::user()->hasGlobalAdmin()) {
         $reload = false;
         if (isset($_POST['parent_id'])) {
@@ -32,6 +32,7 @@ if ($_POST['editing']) {
         $device_model->purpose = $_POST['descr'];
         $device_model->poller_group = $_POST['poller_group'];
         $device_model->ignore = (int) isset($_POST['ignore']);
+        $device_model->ignore_status = (int) isset($_POST['ignore_status']);
         $device_model->disabled = (int) isset($_POST['disabled']);
         $device_model->disable_notify = (int) isset($_POST['disable_notify']);
         $device_model->type = $_POST['type'];
@@ -47,9 +48,9 @@ if ($_POST['editing']) {
 
         if ($device_model->isDirty()) {
             if ($device_model->save()) {
-                flash()->addSuccess(__('Device record updated'));
+                toast()->success(__('Device record updated'));
             } else {
-                flash()->addError(__('Device record update error'));
+                toast()->error(__('Device record update error'));
             }
         }
 
@@ -57,13 +58,13 @@ if ($_POST['editing']) {
             if (Auth::user()->hasGlobalAdmin()) {
                 $result = renamehost($device['device_id'], trim($_POST['hostname']), 'webui');
                 if ($result == '') {
-                    flash()->addSuccess("Hostname updated from {$device['hostname']} to {$_POST['hostname']}");
+                    toast()->success("Hostname updated from {$device['hostname']} to {$_POST['hostname']}");
                     $reload = true;
                 } else {
-                    flash()->addError($result . '.  Does your web server have permission to modify the rrd files?');
+                    toast()->error($result . '.  Does your web server have permission to modify the rrd files?');
                 }
             } else {
-                flash()->addError('Only administrative users may update the device hostname');
+                toast()->error('Only administrative users may update the device hostname');
             }
         }
 
@@ -92,7 +93,7 @@ if ($_POST['editing']) {
 }
 
 $override_sysContact_bool = get_dev_attrib($device, 'override_sysContact_bool');
-$override_sysContact_string = get_dev_attrib($device, 'override_sysContact_string');
+$override_sysContact_string = get_dev_attrib($device, 'override_sysContact_string') ?? '';
 $disable_notify = get_dev_attrib($device, 'disable_notify');
 
 ?>
@@ -135,13 +136,13 @@ $disable_notify = get_dev_attrib($device, 'disable_notify');
     <div class="form-group" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Display Name for this device.  Keep short. Available placeholders: hostname, sysName, sysName_fallback, ip (e.g. '{{ $sysName }}')" >
         <label for="edit-display-input" class="col-sm-2 control-label" >Display Name</label>
         <div class="col-sm-6">
-            <input type="text" id="edit-display-input" name="display" class="form-control" placeholder="System Default" value="<?php echo htmlentities($device_model->display); ?>">
+            <input type="text" id="edit-display-input" name="display" class="form-control" placeholder="System Default" value="<?php echo htmlentities($device_model->display ?? ''); ?>">
         </div>
     </div>
     <div class="form-group" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Use this IP instead of resolved one for polling" >
         <label for="edit-overwrite_ip-input" class="col-sm-2 control-label text-danger" >Overwrite IP (do not use)</label>
         <div class="col-sm-6">
-            <input type="text" id="edit-overwrite_ip-input" name="overwrite_ip" class="form-control" value="<?php echo htmlentities($device_model->overwrite_ip); ?>">
+            <input type="text" id="edit-overwrite_ip-input" name="overwrite_ip" class="form-control" value="<?php echo htmlentities($device_model->overwrite_ip ?? ''); ?>">
         </div>
     </div>
      <div class="form-group">
@@ -314,6 +315,17 @@ If `devices.ignore = 0` or `macros.device = 1` condition is is set and ignore al
                 ?> />
         </div>
     </div>
+    <div class="form-group">
+        <label for="ignore_status" class="col-sm-2 control-label" title="Tag device to ignore Status. It will always be shown as online.">Ignore Device Status</label>
+        <div class="col-sm-6">
+           <input name="ignore_status" type="checkbox" id="ignore_status" value="1" data-size="small"
+                <?php
+                if ($device_model->ignore_status) {
+                    echo 'checked=checked';
+                }
+                ?> />
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-1 col-md-offset-2">
             <button type="submit" name="Submit"  class="btn btn-default"><i class="fa fa-check"></i> Save</button>
@@ -375,7 +387,7 @@ If `devices.ignore = 0` or `macros.device = 1` condition is is set and ignore al
 <?php
 print_optionbar_start();
 [$sizeondisk, $numrrds] = foldersize(Rrd::dirFromHost($device['hostname']));
-echo 'Size on Disk: <b>' . \LibreNMS\Util\Number::formatBi($sizeondisk, 2, 3) . '</b> in <b>' . $numrrds . ' RRD files</b>.';
+echo 'Size on Disk: <b>' . \LibreNMS\Util\Number::formatBi($sizeondisk, 2, 0) . '</b> in <b>' . $numrrds . ' RRD files</b>.';
 echo ' | Last polled: <b>' . $device['last_polled'] . '</b>';
 if ($device['last_discovered']) {
     echo ' | Last discovered: <b>' . $device['last_discovered'] . '</b>';

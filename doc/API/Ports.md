@@ -51,7 +51,7 @@ Route: `/api/v0/ports/search/:search`
 
 Input:
 
-  -
+- columns: Comma separated list of columns you want returned.
 
 Example:
 
@@ -87,17 +87,18 @@ Output:
 }
 ```
 
-### `search_ports in specific column`
+### `search_ports in specific field(s)`
 
 Specific search for ports matching the query.
 
 Route: `/api/v0/ports/search/:field/:search`
 
-- search string to search in field specified by field
+- field: comma separated list of field(s) to search
+- search: string to search in fields
 
 Input:
 
-  -
+- columns: Comma separated list of columns you want returned.
 
 Example:
 
@@ -376,5 +377,97 @@ Output:
       "context_name": ""
     }
   ]
+}
+```
+
+### `get_port_transceiver`
+
+Get transceiver info with metrics
+
+Route: `/api/v0/ports/:portid/transceiver`
+
+- portid must be an integer
+
+Example:
+
+```curl
+curl -H 'X-Auth-Token: YOURAPITOKENHERE' https://librenms.org/api/v0/ports/50736/transceiver
+```
+
+Output:
+
+```json
+{
+    "status": "ok",
+    "transceivers": [
+        {
+            "id": 13,
+            "created_at": "2024-06-26T23:46:06.000000Z",
+            "updated_at": "2024-06-27T00:00:07.000000Z",
+            "device_id": 3138,
+            "port_id": 50736,
+            "index": "51",
+            "type": "10G_BASE_SR_SFP",
+            "vendor": "HPE",
+            "oui": "64 9D 99",
+            "model": null,
+            "revision": "1",
+            "serial": "AAA0000AAA00",
+            "date": null,
+            "ddm": true,
+            "encoding": null,
+            "cable": "MM",
+            "distance": 300,
+            "wavelength": 850,
+            "connector": "LC",
+            "channels": 1
+        }
+    ]
+}
+```
+
+### `get_port_description`
+
+Get the description (`ifAlias`) for a given port id.
+
+Route: `/api/v0/ports/:portid/description`
+
+Example:
+
+```curl
+curl -H 'X-Auth-Token: YOURAPITOKENHERE' https://librenms.org/api/v0/ports/323/description
+```
+
+Output:
+
+```json
+{
+    "status": "ok",
+    "port_description": "GigabitEthernet14"
+}
+```
+
+### `update_port_description`
+
+Change the description (`ifAlias`) for a given port id.
+
+Route: `/api/v0/ports/:portid/description`
+
+Input (JSON):
+
+- description: The string data to use as the new port description.
+Sending an empty string will reset the description to default.
+
+Example:
+
+```curl
+curl -X PATCH -d '{"description": "Out-of-Band Management Link"}' -H 'X-Auth-Token: YOURAPITOKENHERE' https://librenms.org/api/v0/ports/323/description
+```
+
+Output:
+```json
+{
+    "status": "ok",
+    "message": "Port description updated."
 }
 ```

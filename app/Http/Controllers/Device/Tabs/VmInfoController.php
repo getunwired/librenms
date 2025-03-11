@@ -26,6 +26,7 @@
 namespace App\Http\Controllers\Device\Tabs;
 
 use App\Models\Device;
+use Illuminate\Http\Request;
 use LibreNMS\Interfaces\UI\DeviceTab;
 
 class VmInfoController implements DeviceTab
@@ -50,7 +51,7 @@ class VmInfoController implements DeviceTab
         return __('Virtual Machines');
     }
 
-    public function data(Device $device): array
+    public function data(Device $device, Request $request): array
     {
         return [
             'vms' => self::getVms($device),
@@ -59,7 +60,7 @@ class VmInfoController implements DeviceTab
 
     private static function getVms(Device $device)
     {
-        return $device->vmInfo()
+        return $device->vminfo()
         ->select('vmwVmDisplayName', 'vmwVmState', 'vmwVmGuestOS', 'vmwVmMemSize', 'vmwVmCpus')
         ->with('parentDevice')
         ->orderBy('vmwVmDisplayName')

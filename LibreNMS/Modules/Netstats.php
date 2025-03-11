@@ -25,6 +25,10 @@
 
 namespace LibreNMS\Modules;
 
+use App\Models\Device;
+use Illuminate\Support\Facades\Log;
+use LibreNMS\Interfaces\Data\DataStorageInterface;
+use LibreNMS\Interfaces\Module;
 use LibreNMS\Interfaces\Polling\Netstats\IcmpNetstatsPolling;
 use LibreNMS\Interfaces\Polling\Netstats\IpForwardNetstatsPolling;
 use LibreNMS\Interfaces\Polling\Netstats\IpNetstatsPolling;
@@ -32,10 +36,19 @@ use LibreNMS\Interfaces\Polling\Netstats\SnmpNetstatsPolling;
 use LibreNMS\Interfaces\Polling\Netstats\TcpNetstatsPolling;
 use LibreNMS\Interfaces\Polling\Netstats\UdpNetstatsPolling;
 use LibreNMS\OS;
+use LibreNMS\Polling\ModuleStatus;
 use LibreNMS\RRD\RrdDefinition;
 
-class Netstats implements \LibreNMS\Interfaces\Module
+class Netstats implements Module
 {
+    /**
+     * @inheritDoc
+     */
+    public function dependencies(): array
+    {
+        return [];
+    }
+
     /**
      * @var string[][]
      */
@@ -164,6 +177,11 @@ class Netstats implements \LibreNMS\Interfaces\Module
         'tcp' => TcpNetstatsPolling::class,
     ];
 
+    public function shouldDiscover(OS $os, ModuleStatus $status): bool
+    {
+        return false;
+    }
+
     /**
      * @inheritDoc
      */
@@ -172,14 +190,19 @@ class Netstats implements \LibreNMS\Interfaces\Module
         // no discovery
     }
 
+    public function shouldPoll(OS $os, ModuleStatus $status): bool
+    {
+        return $status->isEnabledAndDeviceUp($os->getDevice());
+    }
+
     /**
      * @inheritDoc
      */
-    public function poll(OS $os): void
+    public function poll(OS $os, DataStorageInterface $datastore): void
     {
         foreach ($this->types as $type => $interface) {
             if ($os instanceof $interface) {
-                echo "$type ";
+                Log::info("$type ");
                 $method = (new \ReflectionClass($interface))->getMethods()[0]->getName();
                 $data = $os->$method($this->oids[$type]);
 
@@ -193,7 +216,7 @@ class Netstats implements \LibreNMS\Interfaces\Module
                         $fields[$stat] = $data[$oid] ?? null;
                     }
 
-                    app('Datastore')->put($os->getDeviceArray(), "netstats-$type", ['rrd_def' => $rrd_def], $fields);
+                    $datastore->put($os->getDeviceArray(), "netstats-$type", ['rrd_def' => $rrd_def], $fields);
 
                     // enable graphs
                     foreach ($this->graphs[$type] as $graph) {
@@ -202,15 +225,27 @@ class Netstats implements \LibreNMS\Interfaces\Module
                 }
             }
         }
-        echo PHP_EOL;
+    }
+
+    public function dataExists(Device $device): bool
+    {
+        return false; // no database data
     }
 
     /**
      * @inheritDoc
      */
-    public function cleanup(OS $os): void
+    public function cleanup(Device $device): int
     {
-        // no cleanup
+        return 0; // no cleanup
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function dump(Device $device, string $type): ?array
+    {
+        return null; // no database data to dump (may add rrd later)
     }
 
     private function statName(string $oid): string

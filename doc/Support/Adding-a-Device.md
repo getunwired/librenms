@@ -15,7 +15,7 @@ By default Hostname will be used for polling data. If you want
 to get polling Device data via a specific IP-Address (e.g. Management IP)
 fill out the optional field `Overwrite IP` with it's IP-Address.
 
-![Add device](/img/webui_add_device.png)
+![Add device](../img/webui_add_device.png)
 
 ## Via CLI
 
@@ -23,30 +23,18 @@ Using the command line via ssh you can add a new device by changing to
 the directory of your LibreNMS install and typing (be sure to put the
 correct details).
 
-Preferred method:
 ```bash
-./lnms device:add [--v1|--v2c] [-c yourSNMPcommunity] yourhostname
+./lnms device:add yourhostname [--v1|--v2c] [-c yourSNMPcommunity]
 ```
 
 You can use `./lnms device:add --help` for a list of available options and defaults.
-
-Alternative:
-```bash
-./addhost.php yourhostname [community] [v1|v2c] [port] [udp|udp6|tcp|tcp6]
-```
 
 As an example, if your device with the name `mydevice.example.com` is
 configured to use the community `my_company` using snmp `v2c` then you
 would enter:
 
-Preferred method:
 ```bash
 ./lnms device:add --v2c -c my_company mydevice.example.com
-```
-
-Alternative:
-```bash
-./addhost.php mydevice.example.com my_company v2c
 ```
 
 > Please note that if the community contains special characters such
@@ -64,7 +52,7 @@ added into LibreNMS as Ping Only Device and will show ICMP Response Graph.
 
 Via CLI this is done with `./lnms device:add [-P|--ping-only] yourhostname`
 
-![Ping Only](/img/add-ping-only.png)
+![Ping Only](../img/add-ping-only.png)
 
 A How-to video can be found here: [How to add ping only devices](https://youtu.be/cjuByubg-uk)
 

@@ -10,11 +10,11 @@
                     "version": null,
                     "hardware": "SC-TS01",
                     "features": null,
+                    "location": "<private>",
                     "os": "serverscheck",
                     "type": "environment",
                     "serial": null,
-                    "icon": "serverscheck.svg",
-                    "location": "<private>"
+                    "icon": "serverscheck.svg"
                 }
             ]
         },
@@ -23,6 +23,31 @@
     "sensors": {
         "discovery": {
             "sensors": [
+                {
+                    "sensor_deleted": 0,
+                    "sensor_class": "humidity",
+                    "poller_type": "snmp",
+                    "sensor_oid": ".1.3.6.1.4.1.17095.3.22.0",
+                    "sensor_index": "sensor6name",
+                    "sensor_type": "serverscheck",
+                    "sensor_descr": "Humidity1",
+                    "group": null,
+                    "sensor_divisor": 1,
+                    "sensor_multiplier": 1,
+                    "sensor_current": 39.63,
+                    "sensor_limit": 70,
+                    "sensor_limit_warn": null,
+                    "sensor_limit_low": 30,
+                    "sensor_limit_low_warn": null,
+                    "sensor_alert": 1,
+                    "sensor_custom": "No",
+                    "entPhysicalIndex": null,
+                    "entPhysicalIndex_measured": null,
+                    "sensor_prev": null,
+                    "user_func": null,
+                    "rrd_type": "GAUGE",
+                    "state_name": null
+                },
                 {
                     "sensor_deleted": 0,
                     "sensor_class": "state",
@@ -45,6 +70,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "Serverscheck_FloodSensor"
                 },
                 {
@@ -69,6 +95,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 }
             ],
@@ -100,6 +127,31 @@
             "sensors": [
                 {
                     "sensor_deleted": 0,
+                    "sensor_class": "humidity",
+                    "poller_type": "snmp",
+                    "sensor_oid": ".1.3.6.1.4.1.17095.3.22.0",
+                    "sensor_index": "sensor6name",
+                    "sensor_type": "serverscheck",
+                    "sensor_descr": "Humidity1",
+                    "group": null,
+                    "sensor_divisor": 1,
+                    "sensor_multiplier": 1,
+                    "sensor_current": 39.63,
+                    "sensor_limit": 70,
+                    "sensor_limit_warn": null,
+                    "sensor_limit_low": 30,
+                    "sensor_limit_low_warn": null,
+                    "sensor_alert": 1,
+                    "sensor_custom": "No",
+                    "entPhysicalIndex": null,
+                    "entPhysicalIndex_measured": null,
+                    "sensor_prev": null,
+                    "user_func": null,
+                    "rrd_type": "GAUGE",
+                    "state_name": null
+                },
+                {
+                    "sensor_deleted": 0,
                     "sensor_class": "state",
                     "poller_type": "snmp",
                     "sensor_oid": ".1.3.6.1.4.1.17095.3.10.0",
@@ -120,6 +172,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": 1,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": "Serverscheck_FloodSensor"
                 },
                 {
@@ -144,6 +197,7 @@
                     "entPhysicalIndex_measured": null,
                     "sensor_prev": null,
                     "user_func": null,
+                    "rrd_type": "GAUGE",
                     "state_name": null
                 }
             ],

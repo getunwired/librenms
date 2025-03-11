@@ -26,11 +26,10 @@ $error_poolaction[6] = 'None';
 
 $component = new LibreNMS\Component();
 $options['filter']['disabled'] = ['=', 0];
-$options['filter']['ignore'] = ['=', 0];
 $components = $component->getComponents($device['device_id'], $options);
 
 // We only care about our device id.
-$components = $components[$device['device_id']];
+$components = $components[$device['device_id']] ?? [];
 
 // We extracted all the components for this device, now lets only get the GTM ones.
 $keep = [];

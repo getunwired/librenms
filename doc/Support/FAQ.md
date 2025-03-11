@@ -4,19 +4,20 @@
 
 This is currently well documented within the doc folder of the installation files.
 
-Please see the following [doc](/Installation/Install-LibreNMS.md)
+Please see the following [doc](../Installation/Install-LibreNMS.md)
 
 ### <a name="faq2"> How do I add a device?</a>
 
 You have two options for adding a new device into LibreNMS.
 
 1: Using the command line via ssh you can add a new device by changing
-   to the directory of your LibreNMS install and typing (be sure to
-   put the correct details).
+   to the directory of your LibreNMS install and typing:
 
 ```bash
-./addhost.php [community] [v1|v2c] [port] [udp|udp6|tcp|tcp6]
+lnms device:add [hostname or ip]
 ```
+
+To see all options run: `lnms device:add -h`
 
 > Please note that if the community contains special characters such
 > as `$` then you will need to wrap it in `'`. I.e: `'Pa$$w0rd'`.
@@ -374,14 +375,14 @@ tell you in there.
 You can change the Device Type by going to the device you would like
 to change, then click on the Gear Icon -> Edit. If you would like to
 define custom types, we suggest using [Device
-Groups](/Extensions/Device-Groups/). They will be listed in the
+Groups](../Extensions/Device-Groups.md). They will be listed in the
 menu similarly to device types.
 
 ### <a name="faq34"> Editing large device groups gives error messages</a>
 
 If the device group contains large amount of devices, editing it from the UI might cause errors on the form even when all the data seems correct. This is caused by PHP's `max_input_vars`-variable. You should be able to confirm that this is the case by inspecting the PHP's error logs.
 
-With the basic installation on Ubuntu 20.04 LTS with Nginx and PHP 7.4 FPM this value can be tuned by editing the file `/etc/php/7.4/fpm/php.ini` and adjusting the value of `max_input_vars` to be at least the size of the large group. In larger installations a value such as `10000` should suffice.
+With the basic installation on Ubuntu 22.04 LTS with Nginx and PHP 8.1 FPM this value can be tuned by editing the file `/etc/php/8.1/fpm/php.ini` and adjusting the value of `max_input_vars` to be at least the size of the large group. In larger installations a value such as `10000` should suffice.
 
 ### <a name="faq-where-do-i-update-my-database-credentials">Where do I update my database credentials?</a>
 
@@ -489,7 +490,7 @@ COMMUNITY. Use `snmpwalk` instead of `snmpbulkwalk` for v1 devices.
 
 ```bash
 ./discovery.php -h HOSTNAME -d | ./pbin.sh
-./poller.php -h HOSTNAME -r -f -d | ./pbin.sh
+lnms device:poll HOSTNAME -vv | ./pbin.sh
 snmpbulkwalk -OUneb -v2c -c COMMUNITY HOSTNAME .  | ./pbin.sh
 ```
 

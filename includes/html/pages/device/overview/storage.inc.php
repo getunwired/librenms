@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use LibreNMS\Util\Number;
 
 $graph_type = 'storage_usage';
@@ -21,7 +22,7 @@ if (count($drives)) {
         $skipdrive = 0;
 
         if ($device['os'] == 'junos') {
-            foreach (\LibreNMS\Config::get('ignore_junos_os_drives') as $jdrive) {
+            foreach (\LibreNMS\Config::get('ignore_junos_os_drives', []) as $jdrive) {
                 if (preg_match($jdrive, $drive['storage_descr'])) {
                     $skipdrive = 1;
                 }
@@ -31,7 +32,7 @@ if (count($drives)) {
         }
 
         if ($device['os'] == 'freebsd') {
-            foreach (\LibreNMS\Config::get('ignore_bsd_os_drives') as $jdrive) {
+            foreach (\LibreNMS\Config::get('ignore_bsd_os_drives', []) as $jdrive) {
                 if (preg_match($jdrive, $drive['storage_descr'])) {
                     $skipdrive = 1;
                 }
@@ -62,7 +63,7 @@ if (count($drives)) {
         unset($link_array['height'], $link_array['width'], $link_array['legend']);
         $link = \LibreNMS\Util\Url::generate($link_array);
 
-        $drive['storage_descr'] = \LibreNMS\Util\StringHelpers::shortenText($drive['storage_descr'], 50);
+        $drive['storage_descr'] = Str::limit($drive['storage_descr'], 50);
 
         $overlib_content = generate_overlib_content($graph_array, $device['hostname'] . ' - ' . $drive['storage_descr']);
 

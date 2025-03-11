@@ -19,3 +19,6 @@ discovery:
             value:
                 - RUTX
                 - RUT360
+                - RUT2
+                - TRB500
+                - RUT956

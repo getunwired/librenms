@@ -25,16 +25,29 @@
 
 namespace LibreNMS\OS;
 
+use App\Facades\PortCache;
 use App\Models\Device;
+use App\Models\EntPhysical;
 use App\Models\Sla;
+use App\Models\Transceiver;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use LibreNMS\Interfaces\Data\DataStorageInterface;
 use LibreNMS\Interfaces\Discovery\SlaDiscovery;
+use LibreNMS\Interfaces\Discovery\TransceiverDiscovery;
 use LibreNMS\Interfaces\Polling\OSPolling;
 use LibreNMS\Interfaces\Polling\SlaPolling;
+use LibreNMS\OS\Traits\EntityMib;
 use LibreNMS\RRD\RrdDefinition;
+use SnmpQuery;
 
-class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
+class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling, TransceiverDiscovery
 {
+    use EntityMib {
+        EntityMib::discoverEntityPhysical as discoverBaseEntityPhysical;
+    }
+
     public function discoverOS(Device $device): void
     {
         $data = snmp_get_multi($this->getDeviceArray(), [
@@ -54,12 +67,12 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
         $device->version = $data[0]['jnxVirtualChassisMemberSWVersion'] ?? $parsedVersion[1] ?? $parsed['version'] ?? null;
     }
 
-    public function pollOS(): void
+    public function pollOS(DataStorageInterface $datastore): void
     {
         $data = snmp_get_multi($this->getDeviceArray(), 'jnxJsSPUMonitoringCurrentFlowSession.0', '-OUQs', 'JUNIPER-SRX5000-SPU-MONITORING-MIB');
 
         if (is_numeric($data[0]['jnxJsSPUMonitoringCurrentFlowSession'] ?? null)) {
-            data_update($this->getDeviceArray(), 'junos_jsrx_spu_sessions', [
+            $datastore->put($this->getDeviceArray(), 'junos_jsrx_spu_sessions', [
                 'rrd_def' => RrdDefinition::make()->addDataset('spu_flow_sessions', 'GAUGE', 0),
             ], [
                 'spu_flow_sessions' => $data[0]['jnxJsSPUMonitoringCurrentFlowSession'],
@@ -69,39 +82,103 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
         }
     }
 
-    public function discoverSlas()
+    public function discoverSlas(): Collection
     {
-        $slas = collect();
-        $sla_table = snmpwalk_cache_oid($this->getDeviceArray(), 'pingCtlTable', [], 'DISMAN-PING-MIB');
+        $slas = new Collection();
+        $sla_table = snmpwalk_group($this->getDeviceArray(), 'pingCtlTable', 'DISMAN-PING-MIB', 2, snmpFlags: '-OQUstX');
 
         if (! empty($sla_table)) {
-            $sla_table = snmpwalk_cache_oid($this->getDeviceArray(), 'jnxPingResultsRttUs', $sla_table, 'JUNIPER-PING-MIB');
+            $sla_table = snmpwalk_group($this->getDeviceArray(), 'jnxPingResultsRttUs', 'JUNIPER-PING-MIB', 2, $sla_table, snmpFlags: '-OQUstX');
         }
 
         foreach ($sla_table as $sla_key => $sla_config) {
-            [$owner, $test] = explode('.', $sla_key, 2);
-
-            $slas->push(new Sla([
-                'sla_nr' => hexdec(hash('crc32', $owner . $test)), // indexed by owner+test, convert to int
-                'owner' => $owner,
-                'tag' => $test,
-                'rtt_type' => $this->retrieveJuniperType($sla_config['pingCtlType']),
-                'rtt' => isset($sla_config['jnxPingResultsRttUs']) ? $sla_config['jnxPingResultsRttUs'] / 1000 : null,
-                'status' => ($sla_config['pingCtlAdminStatus'] == 'enabled') ? 1 : 0,
-                'opstatus' => ($sla_config['pingCtlRowStatus'] == 'active') ? 0 : 2,
-            ]));
+            foreach ($sla_config as $test_key => $test_config) {
+                $slas->push(new Sla([
+                    'sla_nr' => hexdec(hash('crc32', $sla_key . $test_key)), // indexed by owner+test, convert to int
+                    'owner' => $sla_key,
+                    'tag' => $test_key,
+                    'rtt_type' => $this->retrieveJuniperType($test_config['pingCtlType']),
+                    'rtt' => isset($test_config['jnxPingResultsRttUs']) ? $test_config['jnxPingResultsRttUs'] / 1000 : null,
+                    'status' => ($test_config['pingCtlAdminStatus'] == 'enabled') ? 1 : 0,
+                    'opstatus' => ($test_config['pingCtlRowStatus'] == 'active') ? 0 : 2,
+                ]));
+            }
         }
 
         return $slas;
     }
 
-    public function pollSlas($slas)
+    public function discoverEntityPhysical(): Collection
+    {
+        $entPhysical = $this->discoverBaseEntityPhysical();
+        if ($entPhysical->isNotEmpty()) {
+            return $entPhysical;
+        }
+
+        $chassisName = null;
+
+        $containers = SnmpQuery::hideMib()
+            ->mibs(['JUNIPER-CHASSIS-DEFINES-MIB'])
+            ->walk('JUNIPER-MIB::jnxContainersTable')
+            ->mapTable(function ($entry, $index) use (&$chassisName) {
+                $modelName = $this->parseType($entry['jnxContainersType'] ?? null, $chassisName);
+                $chassisName ??= $modelName;
+                $descr = $entry['jnxContainersDescr'] ?? null;
+                $within = $entry['jnxContainersWithin'] ?? 0;
+
+                return new EntPhysical([
+                    'entPhysicalIndex' => $index,
+                    'entPhysicalClass' => $within == '0' ? 'chassis' : 'container',
+                    'entPhysicalDescr' => $descr,
+                    'entPhysicalModelName' => $modelName,
+                    'entPhysicalContainedIn' => $within,
+                ]);
+            });
+
+        if ($containers->isEmpty()) {
+            return $containers;
+        }
+
+        return $containers->merge(SnmpQuery::hideMib()->enumStrings()
+            ->mibs(['JUNIPER-CHASSIS-DEFINES-MIB'])
+            ->walk('JUNIPER-MIB::jnxContentsTable')
+            ->mapTable(function ($entry, $container, $indexL1, $indexL2, $indexL3) use ($chassisName, $containers) {
+                // set serial for the chassis, but don't add another container
+                if ($container == 1 && $indexL1 == 1 && $indexL2 == 0 && $indexL3 == 0) {
+                    $chassis = $containers->firstWhere('entPhysicalClass', 'chassis');
+                    if ($chassis) {
+                        $chassis->entPhysicalSerialNum = $entry['jnxContentsSerialNo'] ?? null;
+
+                        return null;
+                    }
+                }
+
+                // Juniper's MIB doesn't have the same objects as the Entity MIB, so some values are made up here.
+                return new EntPhysical([
+                    'entPhysicalIndex' => $container + $indexL1 * 1000000 + $indexL2 * 10000 + $indexL3 * 100,
+                    'entPhysicalDescr' => $entry['jnxContentsDescr'] ?? null,
+                    'entPhysicalContainedIn' => $container,
+                    'entPhysicalClass' => $this->parseClass($entry['jnxContentsType'] ?? null),
+                    'entPhysicalName' => $entry['jnxOperatingDescr'] ?? null,
+                    'entPhysicalSerialNum' => $entry['jnxContentsSerialNo'] ?? null,
+                    'entPhysicalModelName' => $entry['jnxContentsPartNo'] ?? null,
+                    'entPhysicalMfgName' => 'Juniper',
+                    'entPhysicalVendorType' => $this->parseType($entry['jnxContentsType'] ?? null, $chassisName),
+                    'entPhysicalParentRelPos' => -1,
+                    'entPhysicalHardwareRev' => $entry['jnxContentsRevision'] ?? null,
+                    'entPhysicalIsFRU' => isset($entry['jnxContentsSerialNo']) ? ($entry['jnxContentsSerialNo'] == 'BUILTIN' ? 'false' : 'true') : null,
+                ]);
+            }))->filter();
+    }
+
+    public function pollSlas($slas): void
     {
         $device = $this->getDeviceArray();
 
         // Go get some data from the device.
         $data = snmpwalk_group($device, 'pingCtlRowStatus', 'DISMAN-PING-MIB', 2);
         $data = snmpwalk_group($device, 'jnxPingLastTestResultTable', 'JUNIPER-PING-MIB', 2, $data);
+        $data = snmpwalk_group($device, 'jnxPingResultsTable', 'JUNIPER-PING-MIB', 2, $data);
 
         // Get the needed information
         foreach ($slas as $sla) {
@@ -115,19 +192,11 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
             // Use DISMAN-PING Status codes. 0=Good 2=Critical
             $sla->opstatus = $data[$owner][$test]['pingCtlRowStatus'] == '1' ? 0 : 2;
 
-            $sla->rtt = ($data[$owner][$test]['jnxPingLastTestResultAvgRttUs'] ?? 0) / 1000;
-            $time = Carbon::parse($data[$owner][$test]['jnxPingLastTestResultTime'] ?? null)->toDateTimeString();
-            echo 'SLA : ' . $rtt_type . ' ' . $owner . ' ' . $test . '... ' . $sla->rtt . 'ms at ' . $time . "\n";
+            $sla->rtt = ($data[$owner][$test]['jnxPingResultsAvgRttUs'] ?? 0) / 1000;
+            $time = Carbon::parse($data[$owner][$test]['jnxPingResultsTime'] ?? null)->toDateTimeString();
+            Log::info('SLA : ' . $rtt_type . ' ' . $owner . ' ' . $test . '... ' . $sla->rtt . 'ms at ' . $time);
 
-            $fields = [
-                'rtt' => $sla->rtt,
-            ];
-
-            // The base RRD
-            $rrd_name = ['sla', $sla['sla_nr']];
-            $rrd_def = RrdDefinition::make()->addDataset('rtt', 'GAUGE', 0, 300000);
-            $tags = compact('sla_nr', 'rrd_name', 'rrd_def');
-            data_update($device, 'sla', $tags, $fields);
+            $collected = ['rtt' => $sla->rtt];
 
             // Let's gather some per-type fields.
             switch ($rtt_type) {
@@ -138,9 +207,9 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
                 case 'IcmpEcho':
                 case 'IcmpTimeStamp':
                     $icmp = [
-                        'MinRttUs' => ($data[$owner][$test]['jnxPingLastTestResultMinRttUs'] ?? 0) / 1000,
-                        'MaxRttUs' => ($data[$owner][$test]['jnxPingLastTestResultMaxRttUs'] ?? 0) / 1000,
-                        'StdDevRttUs' => ($data[$owner][$test]['jnxPingLastTestResultStdDevRttUs'] ?? 0) / 1000,
+                        'MinRttUs' => ($data[$owner][$test]['jnxPingResultsMinRttUs'] ?? 0) / 1000,
+                        'MaxRttUs' => ($data[$owner][$test]['jnxPingResultsMaxRttUs'] ?? 0) / 1000,
+                        'StdDevRttUs' => ($data[$owner][$test]['jnxPingResultsStdDevRttUs'] ?? 0) / 1000,
                         'ProbeResponses' => $data[$owner][$test]['jnxPingLastTestResultProbeResponses'] ?? null,
                         'ProbeLoss' => (int) ($data[$owner][$test]['jnxPingLastTestResultSentProbes'] ?? 0) - (int) ($data[$owner][$test]['jnxPingLastTestResultProbeResponses'] ?? 0),
                     ];
@@ -152,28 +221,17 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
                         ->addDataset('ProbeResponses', 'GAUGE', 0, 300000)
                         ->addDataset('ProbeLoss', 'GAUGE', 0, 300000);
                     $tags = compact('rrd_name', 'rrd_def', 'sla_nr', 'rtt_type');
-                    data_update($device, 'sla', $tags, $icmp);
-                    $fields = array_merge($fields, $icmp);
+                    app('Datastore')->put($device, 'sla', $tags, $icmp);
+                    $collected = array_merge($collected, $icmp);
                     break;
                 case 'NtpQuery':
                 case 'UdpTimestamp':
                     break;
             }
 
-            d_echo('The following datasources were collected for #' . $sla['sla_nr'] . ":\n");
-            d_echo($fields);
+            d_echo('The following datasources were collected for #' . $sla->sla_nr . ":\n");
+            d_echo($collected);
         }
-    }
-
-    private function calculateSlaNr($key): int
-    {
-        $sum = 0;
-        $length = strlen($key);
-        for ($i = 0; $i < $length; $i++) {
-            $sum += ord($key[$i]);
-        }
-
-        return $sum;
     }
 
     /**
@@ -194,8 +252,99 @@ class Junos extends \LibreNMS\OS implements SlaDiscovery, OSPolling, SlaPolling
                 return 'NtpQuery';
             case 'enterprises.2636.3.7.2.6':
                 return 'UdpTimestamp';
+            case 'zeroDotZero':
+                return 'twamp';
             default:
                 return str_replace('ping', '', $rtt_type);
         }
+    }
+
+    /**
+     * Parse type into a nicer name
+     * jnxChassisEX4300.0 > EX4300
+     * jnxEX4300SlotPower.0 > Slot Power
+     * jnxEX4300MPSlotFan.0 > MP Slot Fan
+     * jnxEX4300MPSlotFPC.0 > MP Slot FPC
+     * jnxEX4300MediaCardSpacePIC.0 > Media Card Space PIC
+     * jnxEX4300MPRE0.0 > MPRE0
+     */
+    public function parseType(?string $type, ?string $chassisName): ?string
+    {
+        if ($type === null) {
+            return $type;
+        }
+
+        if (preg_match('/jnxChassis([^.]+).*/', $type, $matches)) {
+            return $matches[1];
+        }
+
+        // $chassisName is known
+        $name = preg_replace("/jnx($chassisName)?([^.]+).*/", '$2', $type);
+        $words = preg_split('/(^[^A-Z]+|[A-Z][^A-Z0-9]+)/', $name, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+        return implode(' ', $words);
+    }
+
+    public function parseClass($type): ?string
+    {
+        return match ($type) {
+            'jnxFan' => 'fan',
+            'jnxPower' => 'powerSupply',
+
+            default => null,
+        };
+    }
+
+    public function discoverTransceivers(): Collection
+    {
+        $entPhysical = SnmpQuery::walk('ENTITY-MIB::entityPhysical')->table(1);
+
+        $jnxDomCurrentTable = SnmpQuery::cache()->walk('JUNIPER-DOM-MIB::jnxDomCurrentTable')->mapTable(function ($data, $ifIndex) use ($entPhysical) {
+            $ent = $this->findTransceiverEntityByPortName($entPhysical, PortCache::getNameFromIfIndex($ifIndex, $this->getDevice()));
+            if (empty($ent)) {
+                return null; // no module
+            }
+
+            return new Transceiver([
+                'port_id' => (int) PortCache::getIdFromIfIndex($ifIndex, $this->getDevice()),
+                'index' => $ifIndex,
+                'type' => $ent['ENTITY-MIB::entPhysicalName'] ?? null,
+                'vendor' => $ent['ENTITY-MIB::entPhysicalMfgName'] ?? null,
+                'model' => $ent['ENTITY-MIB::entPhysicalModelName'] ?? null,
+                'revision' => $ent['ENTITY-MIB::entPhysicalHardwareRev'] ?? null,
+                'serial' => $ent['ENTITY-MIB::entPhysicalSerialNum'] ?? null,
+                'channels' => $data['JUNIPER-DOM-MIB::jnxDomCurrentModuleLaneCount'] ?? 0,
+                'entity_physical_index' => $ifIndex,
+            ]);
+        })->filter();
+
+        if ($jnxDomCurrentTable->isNotEmpty()) {
+            return $jnxDomCurrentTable;
+        }
+
+        // could use improvement by mapping JUNIPER-IFOPTICS-MIB::jnxOpticsConfigTable for a tiny bit more info
+        return SnmpQuery::cache()->walk('JUNIPER-IFOPTICS-MIB::jnxOpticsPMCurrentTable')
+            ->mapTable(function ($data, $ifIndex) {
+                return new Transceiver([
+                    'port_id' => (int) PortCache::getIdFromIfIndex($ifIndex),
+                    'index' => $ifIndex,
+                    'entity_physical_index' => $ifIndex,
+                ]);
+            });
+    }
+
+    private function findTransceiverEntityByPortName(array $entPhysical, ?string $ifName): array
+    {
+        if ($ifName && preg_match('#-(\d+/\d+/\d+)#', $ifName, $matches)) {
+            $expected_tail = ' @ ' . $matches[1];
+
+            foreach ($entPhysical as $entity) {
+                if (isset($entity['ENTITY-MIB::entPhysicalDescr']) && str_ends_with($entity['ENTITY-MIB::entPhysicalDescr'], $expected_tail)) {
+                    return $entity;
+                }
+            }
+        }
+
+        return [];
     }
 }

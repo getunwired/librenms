@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Discord.php
  *
@@ -21,6 +22,7 @@
  *
  * @copyright  2018 Ryan Finney
  * @author     https://github.com/theherodied/
+ *
  * @contributer f0o, sdef2
  * Thanks to F0o <f0o@devilcode.org> for creating the Slack transport which is the majority of this code.
  * Thanks to sdef2 for figuring out the differences needed to make Discord work.
@@ -29,97 +31,156 @@
 namespace LibreNMS\Alert\Transport;
 
 use LibreNMS\Alert\Transport;
-use LibreNMS\Util\Proxy;
+use LibreNMS\Exceptions\AlertTransportDeliveryException;
+use LibreNMS\Util\Http;
 
 class Discord extends Transport
 {
-    public const ALERT_FIELDS_TO_DISCORD_FIELDS = [
-        'timestamp' => 'Timestamp',
-        'severity' => 'Severity',
-        'hostname' => 'Hostname',
+    private array $embedFieldTranslations = [
         'name' => 'Rule Name',
-        'rule' => 'Rule',
     ];
 
-    public function deliverAlert($obj, $opts)
+    private array $discord_message = [];
+
+    /**
+     * Composes a Discord JSON message and delivers it using HTTP POST
+     * https://discord.com/developers/docs/resources/message#create-message
+     *
+     * @param  array  $alert_data
+     * @return bool
+     */
+    public function deliverAlert(array $alert_data): bool
     {
-        $discord_opts = [
-            'url' => $this->config['url'],
-            'options' => $this->parseUserOptions($this->config['options']),
-        ];
-
-        return $this->contactDiscord($obj, $discord_opts);
-    }
-
-    public function contactDiscord($obj, $discord_opts)
-    {
-        $host = $discord_opts['url'];
-        $curl = curl_init();
-        $discord_title = '#' . $obj['uid'] . ' ' . $obj['title'];
-        $discord_msg = strip_tags($obj['msg']);
-        $color = self::getColorForState($obj['state']);
-
-        // Special handling for the elapsed text in the footer if the elapsed is not set.
-        $footer_text = $obj['elapsed'] ? 'alert took ' . $obj['elapsed'] : '';
-
-        $data = [
+        $this->discord_message = [
             'embeds' => [
                 [
-                    'title' => $discord_title,
-                    'color' => hexdec($color),
-                    'description' => $discord_msg,
-                    'fields' => $this->createDiscordFields($obj, $discord_opts),
+                    'title' => $this->getTitle($alert_data),
+                    'color' => $this->getColorOfAlertState($alert_data),
+                    'description' => $this->getDescription($alert_data),
+                    'fields' => $this->getEmbedFields($alert_data),
                     'footer' => [
-                        'text' => $footer_text,
+                        'text' => $this->getFooter($alert_data),
                     ],
                 ],
             ],
         ];
-        if (! empty($discord_opts['options'])) {
-            $data = array_merge($data, $discord_opts['options']);
+
+        $this->includeINIFields();
+        $this->embedGraphs();
+        $this->stripHTMLTagsFromDescription();
+
+        $res = Http::client()->post($this->config['url'], $this->discord_message);
+
+        if ($res->successful()) {
+            return true;
         }
 
-        $alert_message = json_encode($data);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        Proxy::applyToCurl($curl);
-        curl_setopt($curl, CURLOPT_URL, $host);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $alert_message);
-
-        $ret = curl_exec($curl);
-        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        if ($code != 204) {
-            var_dump("API '$host' returned Error"); //FIXME: propper debuging
-            var_dump('Params: ' . $alert_message); //FIXME: propper debuging
-            var_dump('Return: ' . $ret); //FIXME: propper debuging
-
-            return 'HTTP Status code ' . $code;
-        }
-
-        return true;
+        throw new AlertTransportDeliveryException($alert_data, $res->status(), $res->body(), $alert_data['msg'], $this->discord_message);
     }
 
-    public function createDiscordFields($obj, $discord_opts)
+    private function getTitle(array $alert_data): string
+    {
+        return '#' . $alert_data['uid'] . ' ' . $alert_data['title'];
+    }
+
+    private function stripHTMLTagsFromDescription(): array
+    {
+        $this->discord_message['embeds'][0]['description'] = strip_tags($this->discord_message['embeds'][0]['description']);
+
+        return $this->discord_message;
+    }
+
+    private function getColorOfAlertState(array $alert_data): int
+    {
+        $hexColor = self::getColorForState($alert_data['state']);
+        $sanitized = preg_replace('/[^\dA-Fa-f]/', '', $hexColor);
+
+        return hexdec($sanitized);
+    }
+
+    private function getDescription(array $alert_data): string
+    {
+        return $alert_data['msg'];
+    }
+
+    private function getFooter(array $alert_data): string
+    {
+        return $alert_data['elapsed'] ? 'alert took ' . $alert_data['elapsed'] : '';
+    }
+
+    private function includeINIFields(): array
+    {
+        $ini_fileds = $this->parseUserOptions($this->config['options']);
+
+        if (! empty($ini_fileds)) {
+            $this->discord_message = array_merge($this->discord_message, $ini_fileds);
+        }
+
+        return $this->discord_message;
+    }
+
+    /**
+     * Convert an html <img src=""> tag to a json Discord message Embed Image Structure
+     * https://discord.com/developers/docs/resources/message#embed-object-embed-image-structure
+     *
+     * @return array
+     */
+    private function embedGraphs(): array
+    {
+        $regex = '#<img class="librenms-graph" src="(.*?)"\s*/>#';
+        $count = 1;
+
+        $this->discord_message['embeds'][0]['description'] = preg_replace_callback($regex, function ($match) use (&$count) {
+            $this->discord_message['embeds'][] = [
+                'image' => [
+                    'url' => $match[1],
+                ],
+            ];
+
+            return '[Image ' . ($count++) . ']';
+        }, $this->discord_message['embeds'][0]['description']);
+
+        return $this->discord_message;
+    }
+
+    /**
+     * Converts comma-separated values into an array of name-value pairs.
+     * https://discord.com/developers/docs/resources/message#embed-object-embed-field-structure
+     *
+     * * @param  array  $alert_data  Array containing the values.
+     * @return array An array of name-value pairs.
+     *
+     * @example
+     * Example with 'hostname,sysDescr' as fields:
+     * $result will be:
+     * [
+     *     ['name' => 'Hostname', 'value' => 'server1'],
+     *     ['name' => 'SysDescr', 'value' => 'Linux server description'],
+     * ]
+     */
+    public function getEmbedFields(array $alert_data): array
     {
         $result = [];
 
-        foreach (self::ALERT_FIELDS_TO_DISCORD_FIELDS as $objKey => $discordKey) {
-            // Skip over keys that do not exist so Discord does not give us a 400.
-            if (! $obj[$objKey]) {
-                continue;
-            }
+        if (empty($this->config['discord-embed-fields'])) {
+            return $result;
+        }
 
-            array_push($result, [
-                'name' => $discordKey,
-                'value' => $obj[$objKey],
-            ]);
+        $fields = explode(',', $this->config['discord-embed-fields']);
+
+        foreach ($fields as $field) {
+            $field = trim($field);
+
+            $result[] = [
+                'name' => $this->embedFieldTranslations[$field] ?? ucfirst($field),
+                'value' => $alert_data[$field] ?? 'Error: Invalid Field',
+            ];
         }
 
         return $result;
     }
 
-    public static function configTemplate()
+    public static function configTemplate(): array
     {
         return [
             'config' => [
@@ -134,6 +195,12 @@ class Discord extends Transport
                     'name' => 'options',
                     'descr' => 'Enter the config options (format: option=value separated by new lines)',
                     'type' => 'textarea',
+                ],
+                [
+                    'title' => 'Fields to embed in the alert',
+                    'name' => 'discord-embed-fields',
+                    'descr' => 'Comma seperated list from the alert to embed i.e. hostname,name,timestamp,severity',
+                    'type' => 'text',
                 ],
             ],
             'validation' => [

@@ -3,6 +3,7 @@
 .*
 !/.devcontainer
 !/.gitignore
+!/.git-blame-ignore-revs
 !/.editorconfig
 !/.scrutinizer.yml
 !/.php_cs
@@ -20,6 +21,7 @@ Thumbs.db
 config.php
 html/css/custom/*
 html/images/custom/*
+html/images/custommap/*
 includes/custom/*
 junk
 nbproject
@@ -41,3 +43,8 @@ resources/js/vue-i18n-locales.generated.js
 ########
 out
 librenms_theme
+
+bin/
+lib/
+lib64
+pyvenv.cfg

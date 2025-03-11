@@ -20,8 +20,8 @@
 // ***** Sensors for ADVA FSP3000 R7
 // *************************************************************
 
-    $multiplier = 1;
-    $divisor = 1000;
+$multiplier = 1;
+$divisor = 1000;
 
 if (is_array($pre_cache['adva_fsp3kr7_Card'])) {
     foreach (array_keys($pre_cache['adva_fsp3kr7_Card']) as $index) {
@@ -31,7 +31,7 @@ if (is_array($pre_cache['adva_fsp3kr7_Card'])) {
             $current = $pre_cache['adva_fsp3kr7_Card'][$index]['eqptPhysInstValuePsuAmpere'] / $divisor;
 
             discover_sensor(
-                $valid['sensor'],
+                null,
                 'current',
                 $device,
                 $oid,

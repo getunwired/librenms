@@ -25,9 +25,8 @@
 
 namespace App\Polling\Measure;
 
-use DB;
-use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Log;
 
 class MeasurementManager
@@ -49,17 +48,6 @@ class MeasurementManager
             self::$categories->put('snmp', new MeasurementCollection());
             self::$categories->put('db', new MeasurementCollection());
         }
-    }
-
-    /**
-     * Register DB listener to record sql query stats
-     */
-    public function listenDb(): void
-    {
-        DB::listen(function (QueryExecuted $event) {
-            $type = strtolower(substr($event->sql, 0, strpos($event->sql, ' ')));
-            $this->recordDb(Measurement::make($type, $event->time ? $event->time / 100 : 0));
-        });
     }
 
     /**
@@ -131,6 +119,15 @@ class MeasurementManager
         app('Datastore')->getStats()->each(function (MeasurementCollection $stats, string $datastore) {
             $this->printSummary($datastore, $stats, self::DATASTORE_COLOR);
         });
+
+        $snmpquery_cache_performance = Cache::driver('array')->get('SnmpQuery_cache_performance');
+        if (! empty($snmpquery_cache_performance)) {
+            Log::info('SnmpQuery Cache Performance');
+            foreach ($snmpquery_cache_performance as $key => $hits) {
+                $vars = explode('|', $key);
+                Log::info(" $vars[4] cache hits: $hits" . ($hits ? '' : ' %RWaste of memory!%n'), ['color' => true]);
+            }
+        }
     }
 
     public function getCategory(string $category): MeasurementCollection

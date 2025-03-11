@@ -12,10 +12,8 @@ mib_dir: cisco
 poller_modules:
     cisco-ace-serverfarms: true
     cisco-ace-loadbalancer: true
-    cisco-cbqos: true
     cisco-cef: true
     cisco-mac-accounting: true
-    cisco-voice: true
     cisco-remote-access-monitor: true
     slas: true
     cisco-ipsec-flow-monitor: true
@@ -24,6 +22,7 @@ poller_modules:
     ipmi: false
     cisco-vpdn: true
     cisco-qfp: true
+    xdsl: true
 discovery_modules:
     cisco-cef: true
     slas: true
@@ -33,6 +32,7 @@ discovery_modules:
     vrf: true
     cisco-vrf-lite: true
     cisco-qfp: true
+    xdsl: true
 discovery:
     -
         sysDescr:

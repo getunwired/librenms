@@ -27,14 +27,15 @@ namespace LibreNMS\Util;
 
 use App\Models\Device;
 use LibreNMS\Interfaces\Geocoder;
+use Net_DNS2_Resolver;
 
 class Dns implements Geocoder
 {
-    protected $resolver;
+    protected Net_DNS2_Resolver $resolver;
 
-    public function __construct()
+    public function __construct(Net_DNS2_Resolver $resolver)
     {
-        $this->resolver = new \Net_DNS2_Resolver();
+        $this->resolver = $resolver;
     }
 
     public static function lookupIp(Device $device): ?string
@@ -74,7 +75,9 @@ class Dns implements Geocoder
 
     public function getCoordinates($hostname)
     {
-        foreach ($this->getRecord($hostname, 'LOC') as $record) {
+        $r = $this->getRecord($hostname, 'LOC');
+
+        foreach ($r as $record) {
             return [
                 'lat' => $record->latitude ?? null,
                 'lng' => $record->longitude ?? null,

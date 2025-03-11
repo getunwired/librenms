@@ -30,15 +30,17 @@ use App\Models\Port;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL as LaravelUrl;
 use Illuminate\Support\Str;
 use LibreNMS\Config;
+use Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class Url
 {
     /**
-     * @param  Device  $device
-     * @param  string  $text
+     * @param  Device|null  $device
+     * @param  string|null  $text
      * @param  array  $vars
      * @param  int  $start
      * @param  int  $end
@@ -46,14 +48,14 @@ class Url
      * @param  int  $overlib
      * @return string
      */
-    public static function deviceLink($device, $text = null, $vars = [], $start = 0, $end = 0, $escape_text = 1, $overlib = 1)
+    public static function deviceLink($device, $text = '', $vars = [], $start = 0, $end = 0, $escape_text = 1, $overlib = 1)
     {
         if (! $device instanceof Device || ! $device->hostname) {
-            return '';
+            return $escape_text ? htmlentities($text) : (string) $text;
         }
 
         if (! $device->canAccess(Auth::user())) {
-            return $device->displayName();
+            return $escape_text ? htmlentities($device->displayName()) : $device->displayName();
         }
 
         if (! $start) {
@@ -77,28 +79,34 @@ class Url
         $url = Url::deviceUrl($device, $vars);
 
         // beginning of overlib box contains large hostname followed by hardware & OS details
-        $contents = '<div><span class="list-large">' . $device->displayName() . '</span>';
+        // because we are injecting this into javascript htmlentities alone won't work, so strip_tags too
+        $contents = '<div><span class="list-large">' . htmlentities(strip_tags($device->displayName())) . '</span>';
+        $devinfo = '';
         if ($device->hardware) {
-            $contents .= ' - ' . htmlentities($device->hardware);
+            $devinfo .= $device->hardware;
         }
 
         if ($device->os) {
-            $contents .= ' - ' . htmlentities(Config::getOsSetting($device->os, 'text'));
+            $devinfo .= ($devinfo ? ' - ' : '') . Config::getOsSetting($device->os, 'text');
         }
 
         if ($device->version) {
-            $contents .= ' ' . htmlentities($device->version);
+            $devinfo .= ($devinfo ? ' - ' : '') . $device->version;
         }
 
         if ($device->features) {
-            $contents .= ' (' . htmlentities($device->features) . ')';
+            $devinfo .= ' (' . $device->features . ')';
+        }
+
+        if ($devinfo) {
+            $contents .= '<br />' . htmlentities(strip_tags($devinfo));
         }
 
         if ($device->location_id) {
-            $contents .= ' - ' . htmlentities($device->location);
+            $contents .= '<br />' . htmlentities(strip_tags($device->location ?? ''));
         }
 
-        $contents .= '</div>';
+        $contents .= '</div><br />';
 
         foreach ((array) $graphs as $entry) {
             $graph = isset($entry['graph']) ? $entry['graph'] : 'unknown';
@@ -139,9 +147,10 @@ class Url
             $text = $label;
         }
 
-        $content = '<div class=list-large>' . addslashes(htmlentities($port->device->displayName() . ' - ' . $label)) . '</div>';
+        // strip tags due to complexity of sanitizing here
+        $content = '<div class=list-large>' . addslashes(htmlentities(strip_tags($port->device?->displayName() . ' - ' . $label))) . '</div>';
         if ($description = $port->getDescription()) {
-            $content .= addslashes(htmlentities($description)) . '<br />';
+            $content .= addslashes(htmlentities(strip_tags($description))) . '<br />';
         }
 
         $content .= "<div style=\'width: 850px\'>";
@@ -230,7 +239,7 @@ class Url
      */
     public static function deviceUrl($device, $vars = [])
     {
-        $routeParams = [is_numeric($device) ? $device : $device->device_id];
+        $routeParams = [($device instanceof Device) ? $device->device_id : (int) $device];
         if (isset($vars['tab'])) {
             $routeParams[] = $vars['tab'];
             unset($vars['tab']);
@@ -325,6 +334,20 @@ class Url
     }
 
     /**
+     * @param  array|string  $args
+     */
+    public static function forExternalGraph($args): string
+    {
+        // handle pasted string
+        if (is_string($args)) {
+            $path = str_replace(url('/') . '/', '', $args);
+            $args = self::parseLegacyPathVars($path);
+        }
+
+        return LaravelUrl::signedRoute('graph', $args);
+    }
+
+    /**
      * @param  array  $args
      * @return string
      */
@@ -332,7 +355,7 @@ class Url
     {
         $urlargs = [];
         foreach ($args as $key => $arg) {
-            $urlargs[] = $key . '=' . urlencode($arg);
+            $urlargs[] = $key . '=' . ($arg === null ? '' : urlencode($arg));
         }
 
         return '<img src="' . url('graph.php') . '?' . implode('&amp;', $urlargs) . '" style="border:0;" />';
@@ -372,7 +395,7 @@ class Url
         $urlargs = [];
 
         foreach ($args as $key => $arg) {
-            $urlargs[] = $key . '=' . urlencode($arg);
+            $urlargs[] = $key . '=' . ($arg === null ? '' : urlencode($arg));
         }
 
         $tag = '<img class="img-responsive" src="' . url('graph.php') . '?' . implode('&amp;', $urlargs) . '" style="border:0;"';
@@ -501,7 +524,7 @@ class Url
 
     /**
      * @param  string  $os
-     * @param  string  $feature
+     * @param  string|null  $feature
      * @param  string  $icon
      * @param  string  $dir  directory to search in (images/os/ or images/logos)
      * @return string
@@ -511,7 +534,7 @@ class Url
         $possibilities = [$icon];
 
         if ($os) {
-            if ($os == 'linux') {
+            if ($os == 'linux' && $feature) {
                 // first, prefer the first word of $feature
                 $distro = Str::before(strtolower(trim($feature)), ' ');
                 $possibilities[] = "$distro.svg";
@@ -582,6 +605,57 @@ class Url
         }
 
         return is_null($key) ? $options : $options[$key] ?? $default;
+    }
+
+    /**
+     * Parse variables from legacy path /key=value/key=value or regular get/post variables
+     */
+    public static function parseLegacyPathVars(?string $path = null): array
+    {
+        $vars = [];
+        $parsed_get_vars = [];
+        if (empty($path)) {
+            $path = Request::path();
+        } elseif (Str::startsWith($path, 'http') || str_contains($path, '?')) {
+            $parsed_url = parse_url($path);
+            $path = $parsed_url['path'] ?? '';
+            parse_str($parsed_url['query'] ?? '', $parsed_get_vars);
+        }
+
+        // don't parse the subdirectory, if there is one in the path
+        $base_url = parse_url(Config::get('base_url'))['path'] ?? '';
+        if (strlen($base_url) > 1) {
+            $segments = explode('/', trim(str_replace($base_url, '', $path), '/'));
+        } else {
+            $segments = explode('/', trim($path, '/'));
+        }
+
+        // parse the path
+        foreach ($segments as $pos => $segment) {
+            $segment = urldecode($segment);
+            if ($pos === 0) {
+                $vars['page'] = $segment;
+            } else {
+                [$name, $value] = array_pad(explode('=', $segment), 2, null);
+                if ($value === null) {
+                    if ($vars['page'] == 'device' && $pos < 3) {
+                        // translate laravel device routes properly
+                        $vars[$pos === 1 ? 'device' : 'tab'] = $name;
+                    } elseif ($name) {
+                        $vars[$name] = 'yes';
+                    }
+                } else {
+                    $vars[$name] = $value;
+                }
+            }
+        }
+
+        $vars = array_merge($vars, $parsed_get_vars);
+
+        // don't leak login data
+        unset($vars['username'], $vars['password']);
+
+        return $vars;
     }
 
     private static function escapeBothQuotes($string)
