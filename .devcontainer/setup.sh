@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Install Composer dependencies
+echo "Running Composer install..."
+./scripts/composer_wrapper.php install
+
 # Define the username variable
 USERNAME="librenms"
 
@@ -11,11 +15,11 @@ sudo chmod 0440 /etc/sudoers.d/$USERNAME
 VSCODE_GROUP=$(id -g vscode)
 
 # Add librenms user to the same group as vscode
-sudo usermod -aG $VSCODE_GROUP $USERNAME
+sudo usermod -aG "$VSCODE_GROUP" "$USERNAME"
 
 # Set group ownership for LibreNMS directories
 echo "Setting group ownership for LibreNMS..."
-sudo chown -R :$VSCODE_GROUP /opt/librenms
+sudo chown -R :"$VSCODE_GROUP" /opt/librenms
 
 # Set permissions for LibreNMS directories for the group
 echo "Setting permissions for LibreNMS..."
@@ -28,10 +32,6 @@ sudo chmod 770 /opt/librenms
 echo "Setting ACL for group permissions on LibreNMS directories..."
 sudo setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
 sudo setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
-
-# Install Composer dependencies
-echo "Running Composer install..."
-./scripts/composer_wrapper.php install
 
 # Start MariaDB service
 sudo service mariadb start

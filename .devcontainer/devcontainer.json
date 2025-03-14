@@ -26,5 +26,5 @@
       ]
     }
   },
-  "postCreateCommand": "sudo chown -R librenms:librenms /opt/librenms && sudo chmod -R 775 /opt/librenms && sudo ./.devcontainer/setup.sh"
+  "postCreateCommand": "sudo chown -R librenms:librenms /opt/librenms && sudo chmod +x .devcontainer/setup.sh && sudo ./.devcontainer/setup.sh"
 }
