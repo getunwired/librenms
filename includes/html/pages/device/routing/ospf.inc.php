@@ -17,14 +17,15 @@ echo '
             <th>Areas</th>
             <th>Ports(Enabled)</th>
             <th>Neighbours</th>
+            <th>Context</th>
           </tr>
         </thead>';
 foreach (dbFetchRows('SELECT * FROM `ospf_instances` WHERE `device_id` = ?', [$device['device_id']]) as $instance) {
     $i++;
-    $area_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_areas` WHERE `device_id` = ?', [$device['device_id']]);
-    $port_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_ports` WHERE `device_id` = ?', [$device['device_id']]);
-    $port_count_enabled = dbFetchCell("SELECT COUNT(*) FROM `ospf_ports` WHERE `ospfIfAdminStat` = 'enabled' AND `device_id` = ?", [$device['device_id']]);
-    $nbr_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_nbrs` WHERE `device_id` = ?', [$device['device_id']]);
+    $area_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_areas` WHERE `device_id` = ? AND `context_name` = ?', [$device['device_id'], $instance['context_name']]);
+    $port_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_ports` WHERE `device_id` = ? AND `context_name` = ?', [$device['device_id'], $instance['context_name']]);
+    $port_count_enabled = dbFetchCell("SELECT COUNT(*) FROM `ospf_ports` WHERE `ospfIfAdminStat` = 'enabled' AND `device_id` = ? AND `context_name` = ?", [$device['device_id'], $instance['context_name']]);
+    $nbr_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_nbrs` WHERE `device_id` = ? AND `context_name` = ?', [$device['device_id'], $instance['context_name']]);
 
     $status_color = $abr_status_color = $asbr_status_color = 'default';
 
@@ -51,6 +52,7 @@ foreach (dbFetchRows('SELECT * FROM `ospf_instances` WHERE `device_id` = ?', [$d
             <td>' . $area_count . '</td>
             <td>' . $port_count . '(' . $port_count_enabled . ')</td>
             <td>' . $nbr_count . '</td>
+            <td>' . $instance['context_name'] . '</td>
           </tr>
           <script type="text/javascript">
           $("#ospf-panel_button' . $i . '").on("click", function(){
@@ -72,9 +74,9 @@ foreach (dbFetchRows('SELECT * FROM `ospf_instances` WHERE `device_id` = ?', [$d
                           <th>Status</th>
                         </tr>
                       </thead>';
-    foreach (dbFetchRows('SELECT * FROM `ospf_areas` WHERE `device_id` = ?', [$device['device_id']]) as $area) {
-        $area_port_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_ports` WHERE `device_id` = ? AND `ospfIfAreaId` = ?', [$device['device_id'], $area['ospfAreaId']]);
-        $area_port_count_enabled = dbFetchCell("SELECT COUNT(*) FROM `ospf_ports` WHERE `ospfIfAdminStat` = 'enabled' AND `device_id` = ? AND `ospfIfAreaId` = ?", [$device['device_id'], $area['ospfAreaId']]);
+    foreach (dbFetchRows('SELECT * FROM `ospf_areas` WHERE `device_id` = ? AND `context_name` = ?', [$device['device_id'], $instance['context_name']]) as $area) {
+        $area_port_count = dbFetchCell('SELECT COUNT(*) FROM `ospf_ports` WHERE `device_id` = ? AND `context_name` = ? AND `ospfIfAreaId` = ?', [$device['device_id'], $instance['context_name'], $area['ospfAreaId']]);
+        $area_port_count_enabled = dbFetchCell("SELECT COUNT(*) FROM `ospf_ports` WHERE `ospfIfAdminStat` = 'enabled' AND `device_id` = ? AND `context_name` = ? AND `ospfIfAreaId` = ?", [$device['device_id'], $instance['context_name'], $area['ospfAreaId']]);
 
         echo '
                       <tbody>
@@ -140,7 +142,7 @@ foreach (dbFetchRows('SELECT * FROM `ospf_instances` WHERE `device_id` = ?', [$d
                           <th>Status</th>
                         </tr>
                       </thead>';
-    foreach (dbFetchRows('SELECT * FROM `ospf_nbrs` WHERE `device_id` = ?', [$device['device_id']]) as $nbr) {
+    foreach (dbFetchRows('SELECT * FROM `ospf_nbrs` WHERE `device_id` = ? AND `context_name` = ?', [$device['device_id'], $instance['context_name']]) as $nbr) {
         $host = @dbFetchRow('SELECT * FROM `ipv4_addresses` AS A, `ports` AS I, `devices` AS D WHERE A.ipv4_address = ? AND I.port_id = A.port_id AND D.device_id = I.device_id', [$nbr['ospfNbrRtrId']]);
 
         $rtr_id = 'unknown';
