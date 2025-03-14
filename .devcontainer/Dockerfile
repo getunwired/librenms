@@ -1,44 +1,38 @@
 # Use Ubuntu Jammy as the base image
 FROM mcr.microsoft.com/devcontainers/base:jammy
 
-# Set environment variables for user creation
-ARG USERNAME="librenms"
-ARG USER_UID=1001
-ARG USER_GID=1001
-
-# Install prerequisites
+# Install prerequisites for librenms
 RUN apt-get update && apt-get install -y \
     acl \
-    ca-certificates \
     curl \
     fping \
     git \
-    gnupg \
+    graphviz \
     imagemagick \
-    lsb-release \
-    mysql-server \
+    mariadb-client \
+    mariadb-server \
+    mtr-tiny \
+    nginx-full \
     nmap \
-    python3 \
-    python3-dotenv \
-    python3-pip \
-    python3-psutil \
-    python3-pymysql \
-    python3-redis \
-    python3-setuptools \
-    python3-systemd \
     rrdtool \
     snmp \
     snmpd \
-    software-properties-common \
-    traceroute \
     unzip \
+    python3-pymysql \
+    python3-dotenv \
+    python3-redis \
+    python3-setuptools \
+    python3-psutil \
+    python3-systemd \
+    python3-pip \
     whois \
-    && rm -rf /var/lib/apt/lists/*
+    traceroute \
+    software-properties-common
 
-# Add the PHP PPA (Ondřej Surý’s repository)
+# Add the PHP PPA (Ondřej Surý’s repository) to get access to the latest PHP versions
 RUN add-apt-repository -y ppa:ondrej/php && apt-get update
 
-# Install PHP 8.2
+# Install PHP 8.2 and required extensions
 RUN apt-get install -y \
     php8.2-bcmath \
     php8.2-curl \
@@ -51,25 +45,13 @@ RUN apt-get install -y \
     php8.2-sockets \
     php8.2-tokenizer \
     php8.2-xml \
-    php8.2-zip \
-    && rm -rf /var/lib/apt/lists/*
+    php8.2-zip
 
-# Install Composer globally
+# Clean up apt cache to reduce image size
+RUN rm -rf /var/lib/apt/lists/*
+
+# Install Composer globally (PHP package manager for managing PHP dependencies)
 RUN curl -sS https://getcomposer.org/installer | php8.2 -- --install-dir=/usr/local/bin --filename=composer
 
-# Verify installations
+# Verify the installations by checking the versions of PHP, Composer, Python3, and Pip3
 RUN php -v && composer --version && python3 --version && pip3 --version
-
-# Create the user and group
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME
-
-# Grant the librenms user sudo privileges
-RUN echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
-
-# Set the default user to 'librenms'
-USER $USERNAME
-
-# Set the working directory
-WORKDIR /opt/librenms

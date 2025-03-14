@@ -3,6 +3,15 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/opt/librenms,type=bind",
+  "workspaceFolder": "/opt/librenms",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "librenms"
+    }
+  },
+  "containerUser": "librenms",
+  "remoteUser": "librenms",
   "customizations": {
     "vscode": {
       "settings": {
@@ -17,10 +26,5 @@
       ]
     }
   },
-  "remoteUser": "librenms",
-  "workspaceFolder": "/opt/librenms",
-  "mounts": [
-    "source=${localWorkspaceFolder},target=/opt/librenms,type=bind,consistency=cached"
-  ],
-  "postCreateCommand": "sudo ./.devcontainer/setup.sh"
+  "postCreateCommand": "sudo chown -R librenms:librenms /opt/librenms && sudo chmod -R 775 /opt/librenms && sudo ./.devcontainer/setup.sh"
 }
