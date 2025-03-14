@@ -1,7 +1,20 @@
-# Use Ubuntu Jammy as the base image
-FROM mcr.microsoft.com/devcontainers/base:jammy
+# [Choice] Ubuntu version (use jammy or bionic on local arm64/Apple Silicon): jammy, focal, bionic
+ARG VARIANT="jammy"
+FROM buildpack-deps:${VARIANT}-curl
 
-# Install prerequisites for librenms
+# Options for setup script
+ARG INSTALL_ZSH="true"
+ARG UPGRADE_PACKAGES="true"
+ARG USERNAME=librenms
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+# Install needed packages and setup non-root user. Use a separate RUN statement to add your own dependencies.
+COPY library-scripts/*.sh library-scripts/*.env /tmp/library-scripts/
+RUN yes | unminimize 2>&1 \ 
+    && bash /tmp/library-scripts/common-debian.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" "${UPGRADE_PACKAGES}" "true" "true" \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
+
+# Install the required packages for LibreNMS
 RUN apt-get update && apt-get install -y \
     acl \
     curl \
@@ -52,6 +65,3 @@ RUN rm -rf /var/lib/apt/lists/*
 
 # Install Composer globally (PHP package manager for managing PHP dependencies)
 RUN curl -sS https://getcomposer.org/installer | php8.2 -- --install-dir=/usr/local/bin --filename=composer
-
-# Verify the installations by checking the versions of PHP, Composer, Python3, and Pip3
-RUN php -v && composer --version && python3 --version && pip3 --version
